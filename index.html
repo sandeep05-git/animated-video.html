@@ -2,27 +2,110 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Test Lottie Animation</title>
+<title>Animated Video Generator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
+<script src="https://code.responsivevoice.org/responsivevoice.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+  textarea { width: 100%; height: 100px; font-size: 16px; padding: 8px; }
+  select, button { font-size: 16px; margin: 10px 5px 20px 0; padding: 8px; }
+  #animationContainer { width: 300px; height: 300px; margin: 0 auto; border: 1px solid #ccc; }
+</style>
 </head>
 <body>
 
-<div id="animationContainer" style="width:300px; height:300px;"></div>
-<button onclick="playAnimation()">Play Animation</button>
+<h2>Animated Video Generator</h2>
+
+<textarea id="script" placeholder="Enter your script here..."></textarea><br/>
+
+<label for="character">Choose Character:</label>
+<select id="character">
+  <option value="seller">Seller</option>
+  <option value="boss">Boss</option>
+  <option value="teacher">Teacher</option>
+  <option value="customer">Customer</option>
+  <option value="support">Support</option>
+  <option value="manager">Manager</option>
+</select>
+
+<label for="voice">Choose Voice:</label>
+<select id="voice">
+  <option value="UK English Female">Female (UK)</option>
+  <option value="UK English Male">Male (UK)</option>
+  <option value="US English Female">Female (US)</option>
+  <option value="US English Male">Male (US)</option>
+</select>
+
+<button onclick="generate()">Generate Video</button>
+
+<div id="animationContainer"></div>
 
 <script>
+  // Animation URLs for characters and emotions
+  const animations = {
+    seller: {
+      happy: "https://assets10.lottiefiles.com/packages/lf20_0fhlytwe.json",
+      angry: "https://assets10.lottiefiles.com/packages/lf20_ku4u2vuw.json",
+      neutral: "https://assets10.lottiefiles.com/packages/lf20_9chb8p4d.json"
+    },
+    boss: {
+      happy: "https://assets10.lottiefiles.com/packages/lf20_iwmd6pyr.json",
+      angry: "https://assets10.lottiefiles.com/packages/lf20_1pxqjqps.json",
+      neutral: "https://assets10.lottiefiles.com/packages/lf20_yv5qkvcx.json"
+    },
+    teacher: {
+      happy: "https://assets10.lottiefiles.com/packages/lf20_4kx2q32n.json",
+      angry: "https://assets10.lottiefiles.com/packages/lf20_fymkizuj.json",
+      neutral: "https://assets10.lottiefiles.com/packages/lf20_5i0g1xhv.json"
+    },
+    customer: {
+      happy: "https://assets10.lottiefiles.com/packages/lf20_8jrj9zvl.json",
+      angry: "https://assets10.lottiefiles.com/packages/lf20_0jxqoyhq.json",
+      neutral: "https://assets10.lottiefiles.com/packages/lf20_yv5qkvcx.json"
+    },
+    support: {
+      happy: "https://assets10.lottiefiles.com/packages/lf20_jcikwtux.json",
+      angry: "https://assets10.lottiefiles.com/packages/lf20_6tfjf3hw.json",
+      neutral: "https://assets10.lottiefiles.com/packages/lf20_4p9d4wdr.json"
+    },
+    manager: {
+      happy: "https://assets10.lottiefiles.com/packages/lf20_1b4fxvn6.json",
+      angry: "https://assets10.lottiefiles.com/packages/lf20_7q4vmo0r.json",
+      neutral: "https://assets10.lottiefiles.com/packages/lf20_kbpcgn3n.json"
+    }
+  };
+
   let animation;
 
-  function playAnimation() {
-    if(animation) animation.destroy();
+  function detectEmotion(text) {
+    text = text.toLowerCase();
+    if (text.includes("happy") || text.includes("great") || text.includes("good") || text.includes("awesome")) return "happy";
+    if (text.includes("angry") || text.includes("bad") || text.includes("frustrated") || text.includes("upset")) return "angry";
+    return "neutral";
+  }
+
+  function generate() {
+    const text = document.getElementById("script").value.trim();
+    if (!text) {
+      alert("Please enter your script.");
+      return;
+    }
+
+    const character = document.getElementById("character").value;
+    const voice = document.getElementById("voice").value;
+    const emotion = detectEmotion(text);
+
+    if (animation) animation.destroy();
 
     animation = lottie.loadAnimation({
-      container: document.getElementById('animationContainer'),
-      renderer: 'svg',
+      container: document.getElementById("animationContainer"),
+      renderer: "svg",
       loop: true,
       autoplay: true,
-      path: "https://assets10.lottiefiles.com/packages/lf20_0fhlytwe.json" // happy animation example
+      path: animations[character][emotion]
     });
+
+    responsiveVoice.speak(text, voice);
   }
 </script>
 
