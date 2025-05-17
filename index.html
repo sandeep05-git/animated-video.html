@@ -108,19 +108,50 @@
     responsiveVoice.speak(text, voice);
   }
 </script>
-  <button onclick="downloadAnimation()">Download Animation JSON</button>
+  <button id="startRec">Start Speaking & Recording</button>
+<button id="stopRec" disabled>Stop & Download</button>
+
 <script>
-  function downloadAnimation() {
-    const url = 'https://assets10.lottiefiles.com/packages/lf20_0fhlytwe.json';
-    fetch(url)
-      .then(response => response.blob())
-      .then(blob => {
+  let mediaRecorder;
+  let audioChunks = [];
+
+  document.getElementById('startRec').onclick = () => {
+    if (!window.MediaRecorder) {
+      alert("Your browser does not support MediaRecorder API");
+      return;
+    }
+
+    // Start TTS speaking
+    responsiveVoice.speak("Hello boss, this is your recorded audio.", "UK English Female");
+
+    // Get audio stream from system output (chrome only supports tab capture for this)
+    navigator.mediaDevices.getDisplayMedia({audio: true, video: false}).then(stream => {
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.start();
+      audioChunks = [];
+
+      mediaRecorder.ondataavailable = event => {
+        audioChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, {type: 'audio/wav'});
+        const url = URL.createObjectURL(audioBlob);
         const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'animation.json';
+        a.href = url;
+        a.download = "script_audio.wav";
         a.click();
-      });
-  }
+        URL.revokeObjectURL(url);
+      };
+
+      document.getElementById('stopRec').disabled = false;
+    }).catch(err => alert("Audio capture permission denied or not supported: " + err));
+  };
+
+  document.getElementById('stopRec').onclick = () => {
+    mediaRecorder.stop();
+    document.getElementById('stopRec').disabled = true;
+  };
 </script>
 
 </body>
