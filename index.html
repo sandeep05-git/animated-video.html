@@ -108,6 +108,20 @@
     responsiveVoice.speak(text, voice);
   }
 </script>
+  <button onclick="downloadAnimation()">Download Animation JSON</button>
+<script>
+  function downloadAnimation() {
+    const url = 'https://assets10.lottiefiles.com/packages/lf20_0fhlytwe.json';
+    fetch(url)
+      .then(response => response.blob())
+      .then(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'animation.json';
+        a.click();
+      });
+  }
+</script>
 
 </body>
 </html>
