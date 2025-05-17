@@ -1,166 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Smart Animated Video Creator</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 20px; padding: 0; background: #f0f2f5;
-  }
-  h1 { text-align: center; margin-bottom: 10px; }
-  #characters {
-    display: flex; gap: 15px; justify-content: center; margin-bottom: 15px;
-    overflow-x: auto; padding-bottom: 10px;
-  }
-  .char-thumb {
-    cursor: pointer; border: 3px solid transparent; border-radius: 10px;
-    width: 80px; height: 80px; background: white; display: flex; align-items: center; justify-content: center;
-    flex-direction: column;
-    transition: border-color 0.3s;
-    user-select: none;
-  }
-  .char-thumb.selected {
-    border-color: #0078d7;
-  }
-  .char-name {
-    margin-top: 5px; font-size: 14px; color: #333;
-  }
-  textarea {
-    width: 100%; height: 100px; font-size: 16px; padding: 8px;
-    border-radius: 6px; border: 1px solid #ccc; resize: vertical;
-  }
-  button {
-    margin-top: 15px; padding: 12px 20px; font-size: 16px;
-    background: #0078d7; color: white; border: none; border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  button:hover { background: #005a9e; }
-  #animation-container {
-    margin-top: 20px; width: 300px; height: 300px; margin-left: auto; margin-right: auto;
-    background: white; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    display: flex; align-items: center; justify-content: center;
-  }
-  #downloadAudio, #downloadVideo {
-    margin: 10px 10px 0 10px; padding: 10px 15px;
-    background-color: #28a745; color: white; border: none; border-radius: 5px;
-    cursor: pointer;
-  }
-  #downloadVideo {
-    background-color: #6f42c1;
-  }
-</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Animated Video Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    textarea {
+      width: 90%;
+      height: 100px;
+      margin-bottom: 10px;
+    }
+    .character-selection {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    .char-thumb {
+      width: 100px;
+      height: 120px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+      padding: 5px;
+    }
+    .char-thumb.selected {
+      border-color: #007bff;
+    }
+    .char-name {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    #animationContainer {
+      width: 300px;
+      height: 300px;
+      margin: 20px auto;
+      background: #f0f0f0;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
 
-<h1>Smart Animated Video Creator</h1>
-
-<div id="characters">
-  <!-- Animated thumbnails injected here -->
-</div>
+<h2>🎬 Create Your Animated Video</h2>
 
 <textarea id="scriptInput" placeholder="Type your script here..."></textarea>
+<br>
 
-<button id="generateBtn">Generate Animation & Audio</button>
+<div class="character-selection" id="charactersDiv"></div>
 
-<div id="animation-container"></div>
-
-<div style="text-align:center;">
-  <button id="downloadAudio" disabled>Download Audio</button>
-  <button id="downloadVideo" disabled>Download Video</button>
-</div>
+<br>
+<button id="generateBtn">Generate Video</button>
+<br><br>
+<div id="animationContainer"></div>
+<br>
+<button id="downloadAudioBtn" disabled>Download Audio</button>
+<button id="downloadVideoBtn" disabled>Download Video</button>
 
 <script>
-  // Character data with animations and voice gender
   const characters = [
     {
-      name: 'Teacher',
-      gender: 'female',
-      thumbnails: 'https://assets1.lottiefiles.com/packages/lf20_tutvdkg0.json', // talking
+      name: "Boss",
+      thumbnails: "https://assets4.lottiefiles.com/packages/lf20_1pxqjqps.json",
       animations: {
-        happy: 'https://assets1.lottiefiles.com/packages/lf20_tutvdkg0.json',
-        sad: 'https://assets3.lottiefiles.com/packages/lf20_zrhfdqre.json',
-        talking: 'https://assets1.lottiefiles.com/packages/lf20_tutvdkg0.json'
-      }
+        talking: "https://assets4.lottiefiles.com/packages/lf20_1pxqjqps.json"
+      },
+      voice: "Brian"
     },
     {
-      name: 'Seller',
-      gender: 'male',
-      thumbnails: 'https://assets1.lottiefiles.com/packages/lf20_oal7p8e3.json',
+      name: "Seller",
+      thumbnails: "https://assets3.lottiefiles.com/private_files/lf30_editor_pzjcpmra.json",
       animations: {
-        happy: 'https://assets1.lottiefiles.com/packages/lf20_oal7p8e3.json',
-        sad: 'https://assets2.lottiefiles.com/packages/lf20_d5x6g4yi.json',
-        talking: 'https://assets1.lottiefiles.com/packages/lf20_oal7p8e3.json'
-      }
-    },
-    {
-      name: 'Developer',
-      gender: 'male',
-      thumbnails: 'https://assets6.lottiefiles.com/packages/lf20_sg9ca4lo.json',
-      animations: {
-        happy: 'https://assets6.lottiefiles.com/packages/lf20_sg9ca4lo.json',
-        sad: 'https://assets3.lottiefiles.com/packages/lf20_c7w43dnk.json',
-        talking: 'https://assets6.lottiefiles.com/packages/lf20_sg9ca4lo.json'
-      }
-    },
-    {
-      name: 'Chef',
-      gender: 'female',
-      thumbnails: 'https://assets7.lottiefiles.com/packages/lf20_9zghrttk.json',
-      animations: {
-        happy: 'https://assets7.lottiefiles.com/packages/lf20_9zghrttk.json',
-        sad: 'https://assets9.lottiefiles.com/packages/lf20_qdqm6r9m.json',
-        talking: 'https://assets7.lottiefiles.com/packages/lf20_9zghrttk.json'
-      }
-    },
-    {
-      name: 'Astronaut',
-      gender: 'male',
-      thumbnails: 'https://assets1.lottiefiles.com/packages/lf20_zwq9fwfi.json',
-      animations: {
-        happy: 'https://assets1.lottiefiles.com/packages/lf20_zwq9fwfi.json',
-        sad: 'https://assets2.lottiefiles.com/packages/lf20_rdycvqnx.json',
-        talking: 'https://assets1.lottiefiles.com/packages/lf20_zwq9fwfi.json'
-      }
+        talking: "https://assets3.lottiefiles.com/private_files/lf30_editor_pzjcpmra.json"
+      },
+      voice: "Emma"
     }
   ];
 
-  // Voice mapping by gender
-  const voices = {
-    male: 'Brian',
-    female: 'Emma'
-  };
+  const charactersDiv = document.getElementById("charactersDiv");
+  const animationContainer = document.getElementById("animationContainer");
+  const scriptInput = document.getElementById("scriptInput");
+  const generateBtn = document.getElementById("generateBtn");
+  const downloadAudioBtn = document.getElementById("downloadAudioBtn");
+  const downloadVideoBtn = document.getElementById("downloadVideoBtn");
 
-  const charactersDiv = document.getElementById('characters');
-  const scriptInput = document.getElementById('scriptInput');
-  const generateBtn = document.getElementById('generateBtn');
-  const animationContainer = document.getElementById('animation-container');
-  const downloadAudioBtn = document.getElementById('downloadAudio');
-  const downloadVideoBtn = document.getElementById('downloadVideo');
-
-  let selectedCharacter = null;
+  let currentAudioUrl = "";
   let currentAnimation = null;
-  let currentAudioUrl = null;
+  let selectedCharacterIndex = 0;
 
-  // Load thumbnails for each character
   function loadCharacterThumbnails() {
     characters.forEach((char, i) => {
       const div = document.createElement('div');
       div.classList.add('char-thumb');
       div.dataset.index = i;
-      // Use Lottie animation as thumbnail (static frame)
+
+      const animDiv = document.createElement('div');
+      animDiv.style.width = '80px';
+      animDiv.style.height = '80px';
+      div.appendChild(animDiv);
+
+      // Load Lottie animation inside thumbnail
       lottie.loadAnimation({
-        container: div,
+        container: animDiv,
         renderer: 'svg',
         loop: true,
         autoplay: true,
-        animationData: null,
         path: char.thumbnails
       });
-      // Add character name
+
       const nameSpan = document.createElement('div');
       nameSpan.classList.add('char-name');
       nameSpan.textContent = char.name;
@@ -172,55 +124,20 @@
 
       charactersDiv.appendChild(div);
     });
+
+    selectCharacter(0);
   }
 
-  // Select character and highlight UI
   function selectCharacter(index) {
-    selectedCharacter = characters[index];
-    // Remove previous selection
-    [...charactersDiv.children].forEach(c => c.classList.remove('selected'));
-    charactersDiv.children[index].classList.add('selected');
+    selectedCharacterIndex = index;
+    const thumbs = document.querySelectorAll('.char-thumb');
+    thumbs.forEach(thumb => thumb.classList.remove('selected'));
+    thumbs[index].classList.add('selected');
   }
 
-  // Detect emotion from script (simple keyword-based)
-  function detectEmotion(script) {
-    const s = script.toLowerCase();
-    if (s.includes('happy') || s.includes('excited') || s.includes('great') || s.includes('good')) return 'happy';
-    if (s.includes('sad') || s.includes('tired') || s.includes('bad') || s.includes('angry')) return 'sad';
-    return 'talking'; // default
-  }
-
-  // Detect gender from script (basic)
-  function detectGender(script) {
-    const s = script.toLowerCase();
-    if (s.includes(' she ') || s.includes(' her ') || s.includes(' female ') || s.includes(' woman ')) return 'female';
-    if (s.includes(' he ') || s.includes(' him ') || s.includes(' male ') || s.includes(' man ')) return 'male';
-    // fallback: use selected character gender or female default
-    return selectedCharacter ? selectedCharacter.gender : 'female';
-  }
-
-  // Detect character based on keywords (basic)
-  function detectCharacter(script) {
-    const s = script.toLowerCase();
-    if (s.includes('teacher')) return 'Teacher';
-    if (s.includes('seller')) return 'Seller';
-    if (s.includes('developer') || s.includes('programmer') || s.includes('coder')) return 'Developer';
-    if (s.includes('chef') || s.includes('cook')) return 'Chef';
-    if (s.includes('astronaut')) return 'Astronaut';
-    // default fallback
-    return selectedCharacter ? selectedCharacter.name : 'Teacher';
-  }
-
-  // Find character index by name
-  function findCharacterIndexByName(name) {
-    return characters.findIndex(c => c.name === name);
-  }
-
-  // Load and play animation by character + emotion
-  function playAnimation(character, emotion) {
-    if(currentAnimation) {
+  function playAnimation(character) {
+    if (currentAnimation) {
       currentAnimation.destroy();
-      currentAnimation = null;
     }
     animationContainer.innerHTML = '';
     currentAnimation = lottie.loadAnimation({
@@ -228,26 +145,20 @@
       renderer: 'svg',
       loop: true,
       autoplay: true,
-      path: character.animations[emotion] || character.animations['talking']
+      path: character.animations.talking
     });
   }
 
-  // Generate audio using StreamElements TTS
   async function generateAudio(text, voice) {
-    const ttsUrl = `https://api.streamelements.com/kappa/v2/speech?voice=${voice}&text=${encodeURIComponent(text)}`;
-    return ttsUrl;
+    const url = `https://api.streamelements.com/kappa/v2/speech?voice=${voice}&text=${encodeURIComponent(text)}`;
+    return url;
   }
 
-  // Play audio and return audio object
-  function playAudio(url) {
-    return new Promise((resolve) => {
-      const audio = new Audio(url);
-      audio.play();
-      audio.onended = () => resolve();
-    });
+  async function playAudio(url) {
+    const audio = new Audio(url);
+    audio.play();
   }
 
-  // Download file helper
   function downloadFile(url, filename) {
     const a = document.createElement('a');
     a.href = url;
@@ -255,116 +166,60 @@
     a.click();
   }
 
-  // Recording video - capturing animation container canvas + audio
-  // We use MediaRecorder with canvas captureStream and audio destination nodes
-  async function recordVideo(durationSec) {
-    if (!currentAnimation) return null;
-    // Create a canvas
-    const canvas = document.createElement('canvas');
-    canvas.width = animationContainer.clientWidth;
-    canvas.height = animationContainer.clientHeight;
-    const ctx = canvas.getContext('2d');
+  async function recordVideo(durationSeconds = 10) {
+    const stream = animationContainer.captureStream();
+    const recorder = new MediaRecorder(stream);
+    const chunks = [];
 
-    // Capture stream from canvas
-    const stream = canvas.captureStream(30);
+    recorder.ondataavailable = e => chunks.push(e.data);
+    recorder.start();
 
-    // Load animation frames using lottie and draw to canvas
-    let frame = 0;
-    const totalFrames = durationSec * 30;
+    await new Promise(resolve => setTimeout(resolve, durationSeconds * 1000));
+    recorder.stop();
 
-    // Prepare MediaRecorder
-    let recordedChunks = [];
-    const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-    mediaRecorder.ondataavailable = e => {
-      if(e.data.size > 0) recordedChunks.push(e.data);
-    };
-
-    mediaRecorder.start();
-
-    return new Promise((resolve) => {
-      const interval = setInterval(() => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // NOTE: We cannot render lottie animation frames to canvas easily
-        // So this is a limitation - for full video download a different approach or server is needed
-        // For demo, just show static white background
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        frame++;
-        if(frame >= totalFrames) {
-          clearInterval(interval);
-          mediaRecorder.stop();
-        }
-      }, 1000 / 30);
-
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(recordedChunks, { type: 'video/webm' });
-        const videoUrl = URL.createObjectURL(blob);
-        resolve(videoUrl);
+    return new Promise(resolve => {
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        resolve(url);
       };
     });
   }
 
-  // Initialize character thumbnails UI
-  loadCharacterThumbnails();
-
-  // Pre-select first character by default
-  selectCharacter(0);
-
   generateBtn.addEventListener('click', async () => {
     const script = scriptInput.value.trim();
-    if (!script) {
-      alert('Please enter your script.');
-      return;
-    }
+    if (!script) return alert("Please enter a script!");
 
-    // Auto detect character from script
-    const detectedCharName = detectCharacter(script);
-    const charIndex = findCharacterIndexByName(detectedCharName);
-    if(charIndex !== -1) selectCharacter(charIndex);
+    const character = characters[selectedCharacterIndex];
+    playAnimation(character);
 
-    // Detect emotion & gender
-    const emotion = detectEmotion(script);
-    const gender = detectGender(script);
-
-    // Adjust voice by gender
-    const voice = voices[gender] || 'Emma';
-
-    // Play animation with emotion
-    playAnimation(selectedCharacter, emotion);
-
-    // Generate audio URL (StreamElements TTS)
-    currentAudioUrl = await generateAudio(script, voice);
-
-    // Play audio
+    currentAudioUrl = await generateAudio(script, character.voice);
     await playAudio(currentAudioUrl);
 
-    // Enable download audio button
     downloadAudioBtn.disabled = false;
     downloadVideoBtn.disabled = false;
   });
 
-  // Download audio on click
   downloadAudioBtn.addEventListener('click', () => {
-    if(currentAudioUrl) {
+    if (currentAudioUrl) {
       downloadFile(currentAudioUrl, 'audio.mp3');
     }
   });
 
-  // Download video (basic demo)
   downloadVideoBtn.addEventListener('click', async () => {
+    downloadVideoBtn.textContent = "Recording...";
     downloadVideoBtn.disabled = true;
-    downloadVideoBtn.textContent = 'Recording...';
 
-    // Record 10 seconds video demo
     const videoUrl = await recordVideo(10);
-
-    if(videoUrl) {
-      downloadFile(videoUrl, 'animation.webm');
+    if (videoUrl) {
+      downloadFile(videoUrl, "animation.webm");
     }
 
-    downloadVideoBtn.textContent = 'Download Video';
+    downloadVideoBtn.textContent = "Download Video";
     downloadVideoBtn.disabled = false;
   });
+
+  loadCharacterThumbnails();
 </script>
 
 </body>
