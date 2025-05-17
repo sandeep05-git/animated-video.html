@@ -23,16 +23,9 @@
 
   <button onclick="createVideo()">Generate Video</button>
 
-  <div id="animation">
-    <lottie-player
-      id="lottieAnim"
-      background="transparent"
-      speed="1"
-      style="width: 300px; height: 300px;"
-      loop autoplay
-    ></lottie-player>
-    <audio id="audioPlayer" controls style="width: 100%; margin-top: 20px;"></audio>
-  </div>
+  <div id="animation"></div>
+
+  <audio id="audioPlayer" controls style="width: 100%; margin-top: 20px;"></audio>
 
   <script>
     const animations = {
@@ -43,24 +36,33 @@
 
     function createVideo() {
       const text = document.getElementById('scriptInput').value.trim();
+      const character = document.getElementById('characterSelect').value;
+
       if (!text) {
         alert('Please enter some text!');
         return;
       }
 
-      const character = document.getElementById('characterSelect').value;
-      const lottiePlayer = document.getElementById('lottieAnim');
+      const animationUrl = animations[character];
+      const animationContainer = document.getElementById('animation');
       const audioPlayer = document.getElementById('audioPlayer');
 
-      // Set the animation JSON URL
-      const animationUrl = animations[character];
-      if (!animationUrl) {
-        alert('Animation not found for the selected character!');
-        return;
-      }
-      lottiePlayer.setAttribute('src', animationUrl);
+      // Clear previous animation
+      animationContainer.innerHTML = '';
 
-      // Generate TTS audio URL using StreamElements API
+      // Create and add a new Lottie player
+      const lottiePlayer = document.createElement('lottie-player');
+      lottiePlayer.setAttribute('src', animationUrl);
+      lottiePlayer.setAttribute('background', 'transparent');
+      lottiePlayer.setAttribute('speed', '1');
+      lottiePlayer.setAttribute('loop', '');
+      lottiePlayer.setAttribute('autoplay', '');
+      lottiePlayer.style.width = '300px';
+      lottiePlayer.style.height = '300px';
+
+      animationContainer.appendChild(lottiePlayer);
+
+      // Set and play audio
       const audioUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=${encodeURIComponent(text)}`;
       audioPlayer.src = audioUrl;
       audioPlayer.play();
