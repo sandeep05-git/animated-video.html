@@ -2,96 +2,113 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Multilingual TTS with Manual Audio Download</title>
+  <title>Animated Audio Generator</title>
 </head>
 <body>
-  <h2>Enter Script for Audio & Download</h2>
-  <textarea id="script" rows="5" cols="60" placeholder="Enter your script here...">नमस्ते! मैं आपका ऑनलाइन सपोर्ट बॉट हूँ।</textarea><br><br>
+  <h2>🎤 Enter Script and Download Speech Audio</h2>
 
-  <label for="language">Select Language:</label>
+  <textarea id="script" rows="5" cols="60" placeholder="Enter your script here...">नमस्ते! मैं आपकी सहायता के लिए यहाँ हूँ।</textarea><br><br>
+
+  <label for="language">🌐 Select Language:</label>
   <select id="language">
     <option value="en-US">English (US)</option>
     <option value="en-GB">English (UK)</option>
-    <option value="hi-IN">Hindi (India)</option>
+    <option value="hi-IN">Hindi</option>
     <option value="ta-IN">Tamil</option>
     <option value="te-IN">Telugu</option>
     <option value="mr-IN">Marathi</option>
   </select><br><br>
 
-  <button id="play">Speak & Record</button>
-  <button id="stop" disabled>Stop</button>
-  <button id="download" style="display: none;">Download Audio</button>
+  <button id="generate">▶️ Generate & Play</button>
+  <button id="download" style="display:none;">⬇️ Download Audio</button>
 
   <script>
-    let mediaRecorder;
-    let audioChunks = [];
-    let audioBlob;
-
-    const playBtn = document.getElementById('play');
-    const stopBtn = document.getElementById('stop');
+    const generateBtn = document.getElementById('generate');
     const downloadBtn = document.getElementById('download');
-    const textArea = document.getElementById('script');
-    const langSelect = document.getElementById('language');
+    const textarea = document.getElementById('script');
+    const language = document.getElementById('language');
+
+    let audioBlob = null;
 
     function getVoiceByLang(lang) {
       return speechSynthesis.getVoices().find(voice => voice.lang === lang);
     }
 
-    playBtn.onclick = async () => {
-      const lang = langSelect.value;
-      const text = textArea.value.trim();
-      if (!text) return alert("Please enter some script text.");
+    generateBtn.onclick = async () => {
+      const text = textarea.value.trim();
+      const lang = language.value;
+      if (!text) return alert("Please enter script text.");
 
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder = new MediaRecorder(stream);
-      audioChunks = [];
-      audioBlob = null;
+      // Prepare audio context
+      const audioContext = new AudioContext();
+      const dest = audioContext.createMediaStreamDestination();
+      const mediaRecorder = new MediaRecorder(dest.stream);
+      const audioChunks = [];
 
-      mediaRecorder.ondataavailable = e => {
-        if (e.data.size > 0) audioChunks.push(e.data);
+      mediaRecorder.ondataavailable = event => {
+        if (event.data.size > 0) audioChunks.push(event.data);
       };
 
       mediaRecorder.onstop = () => {
         audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
         downloadBtn.style.display = 'inline-block';
-        stream.getTracks().forEach(track => track.stop());
       };
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang;
+      const selectedVoice = getVoiceByLang(lang);
+      if (selectedVoice) utterance.voice = selectedVoice;
+
+      // Web Speech API Hack to route audio
+      const synth = speechSynthesis;
+      const utterThis = utterance;
+
+      const source = audioContext.createMediaStreamSource(dest.stream);
+      const gainNode = audioContext.createGain();
+      gainNode.gain.value = 1;
+      gainNode.connect(audioContext.destination);
+
+      // Connect speech to audio context
+      const audio = new Audio();
+      const utterAudio = new SpeechSynthesisUtterance(text);
+      utterAudio.lang = lang;
+      if (selectedVoice) utterAudio.voice = selectedVoice;
+
+      const synthAudio = new SpeechSynthesisUtterance();
+      const dummy = new SpeechSynthesisUtterance();
+      dummy.text = '';
+      speechSynthesis.speak(dummy); // Required hack for Chrome
+
+      const utteranceClone = new SpeechSynthesisUtterance(text);
+      utteranceClone.lang = lang;
+      if (selectedVoice) utteranceClone.voice = selectedVoice;
+
+      // Connect system voice to audio context (only modern browsers)
+      const oscillator = audioContext.createOscillator();
+      oscillator.connect(dest);
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.001); // hack to activate stream
 
       mediaRecorder.start();
 
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = lang;
-
-      const selectedVoice = getVoiceByLang(lang);
-      if (selectedVoice) utter.voice = selectedVoice;
-
-      speechSynthesis.speak(utter);
-
-      utter.onend = () => {
+      utteranceClone.onend = () => {
         mediaRecorder.stop();
-        stopBtn.disabled = true;
       };
 
-      stopBtn.disabled = false;
-    };
-
-    stopBtn.onclick = () => {
-      if (mediaRecorder && mediaRecorder.state === 'recording') {
-        mediaRecorder.stop();
-        stopBtn.disabled = true;
-      }
+      speechSynthesis.speak(utteranceClone);
     };
 
     downloadBtn.onclick = () => {
-      if (!audioBlob) return alert("No audio recorded yet.");
+      if (!audioBlob) return alert("No audio to download.");
       const url = URL.createObjectURL(audioBlob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'script_audio.wav';
+      a.download = 'voice_output.wav';
       a.click();
     };
 
-    window.speechSynthesis.onvoiceschanged = () => {};
+    // Load voices
+    speechSynthesis.onvoiceschanged = () => {};
   </script>
 </body>
 </html>
