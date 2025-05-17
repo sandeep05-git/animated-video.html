@@ -1,128 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Animated Video Generator</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
-  <script src="https://code.responsivevoice.org/responsivevoice.js?key=YOUR_KEY_HERE"></script>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    textarea { width: 100%; height: 100px; font-size: 16px; margin-bottom: 10px; }
-    select, button { font-size: 16px; margin: 5px 0; }
-    #animationContainer { width: 300px; height: 300px; margin: 20px auto; }
-  </style>
+<meta charset="UTF-8" />
+<title>Simple Animated Video Test</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
+<script src="https://code.responsivevoice.org/responsivevoice.js"></script>
+<style>
+  #animationContainer { width: 300px; height: 300px; margin: 20px auto; }
+</style>
 </head>
 <body>
 
-  <h1>Animated Video Generator</h1>
+<textarea id="script" placeholder="Enter script here" style="width:100%; height:80px;"></textarea><br/>
+<button onclick="run()">Play</button>
 
-  <label>Enter Your Script:</label><br />
-  <textarea id="script" placeholder="Type your script here..."></textarea><br />
+<div id="animationContainer"></div>
 
-  <label>Select Language:</label><br />
-  <select id="language">
-    <option value="english">English</option>
-    <option value="hindi">Hindi</option>
-  </select><br />
+<script>
+  const animations = {
+    happy: "https://assets10.lottiefiles.com/packages/lf20_0fhlytwe.json",
+    angry: "https://assets10.lottiefiles.com/packages/lf20_ku4u2vuw.json",
+    neutral: "https://assets10.lottiefiles.com/packages/lf20_9chb8p4d.json"
+  };
 
-  <label>Select Character:</label><br />
-  <select id="character">
-    <option value="seller">Seller</option>
-    <option value="boss">Boss</option>
-    <option value="teacher">Teacher</option>
-  </select><br />
+  let animation;
 
-  <label>Select Voice:</label><br />
-  <select id="voice">
-    <option value="male">Male</option>
-    <option value="female" selected>Female</option>
-  </select><br />
+  function detectEmotion(text) {
+    text = text.toLowerCase();
+    if (text.includes("happy")) return "happy";
+    if (text.includes("angry")) return "angry";
+    return "neutral";
+  }
 
-  <button onclick="generateVideo()">Generate Video</button>
+  function run() {
+    let text = document.getElementById('script').value;
+    let emotion = detectEmotion(text);
 
-  <div id="animationContainer"></div>
+    if(animation) animation.destroy();
 
-  <script>
-    // Lottie animations mapped by character and emotion (these are example JSON URLs)
-    const animations = {
-      seller: {
-        happy: "https://assets10.lottiefiles.com/packages/lf20_0fhlytwe.json",
-        angry: "https://assets10.lottiefiles.com/packages/lf20_ku4u2vuw.json",
-        sad: "https://assets10.lottiefiles.com/packages/lf20_48rQrH.json",
-        neutral: "https://assets10.lottiefiles.com/packages/lf20_9chb8p4d.json"
-      },
-      boss: {
-        happy: "https://assets10.lottiefiles.com/packages/lf20_cnp6ttrz.json",
-        angry: "https://assets10.lottiefiles.com/packages/lf20_3p7yb6ld.json",
-        sad: "https://assets10.lottiefiles.com/packages/lf20_9c8lbv9t.json",
-        neutral: "https://assets10.lottiefiles.com/packages/lf20_2m9zxykc.json"
-      },
-      teacher: {
-        happy: "https://assets10.lottiefiles.com/packages/lf20_6ejtpztz.json",
-        angry: "https://assets10.lottiefiles.com/packages/lf20_ojcjxocd.json",
-        sad: "https://assets10.lottiefiles.com/packages/lf20_iq4juzid.json",
-        neutral: "https://assets10.lottiefiles.com/packages/lf20_1tnqccxe.json"
-      }
-    };
+    animation = lottie.loadAnimation({
+      container: document.getElementById('animationContainer'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: animations[emotion]
+    });
 
-    let currentAnimation;
-
-    function detectEmotion(text) {
-      text = text.toLowerCase();
-      // English keywords
-      if (text.match(/angry|mad|frustrated|furious|gussa|क्रोध/)) return "angry";
-      if (text.match(/happy|glad|joy|excited|खुश|उत्साहित/)) return "happy";
-      if (text.match(/sad|unhappy|depressed|down|निराश|उदास/)) return "sad";
-      return "neutral"; // default emotion
-    }
-
-    function getVoice(language, gender) {
-      if(language === "hindi") {
-        return gender === "male" ? "Hindi Male" : "Hindi Female";
-      }
-      // English voices on responsivevoice.org
-      if(language === "english") {
-        return gender === "male" ? "UK English Male" : "UK English Female";
-      }
-      return null;
-    }
-
-    function loadAnimation(character, emotion) {
-      if(currentAnimation) {
-        currentAnimation.destroy();
-      }
-      const animData = animations[character] && animations[character][emotion] ? animations[character][emotion] : animations[character]["neutral"];
-      currentAnimation = lottie.loadAnimation({
-        container: document.getElementById('animationContainer'),
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: animData
-      });
-    }
-
-    function generateVideo() {
-      const scriptText = document.getElementById("script").value.trim();
-      if (!scriptText) {
-        alert("Please enter your script!");
-        return;
-      }
-      const language = document.getElementById("language").value;
-      const character = document.getElementById("character").value;
-      const voiceGender = document.getElementById("voice").value;
-
-      const emotion = detectEmotion(scriptText);
-      loadAnimation(character, emotion);
-
-      const voice = getVoice(language, voiceGender);
-      if(!voice) {
-        alert("Voice not found for selected language/gender!");
-        return;
-      }
-
-      responsiveVoice.speak(scriptText, voice);
-    }
-  </script>
+    responsiveVoice.speak(text, "UK English Female");
+  }
+</script>
 
 </body>
 </html>
