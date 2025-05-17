@@ -3,46 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <title>Animated Video Generator</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-    textarea {
-      width: 90%;
-      height: 100px;
-      margin-bottom: 10px;
-    }
-    .character-selection {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-    }
-    .char-thumb {
-      width: 100px;
-      height: 120px;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      cursor: pointer;
-      padding: 5px;
-    }
-    .char-thumb.selected {
-      border-color: #007bff;
-    }
-    .char-name {
-      font-size: 14px;
-      margin-top: 5px;
-    }
-    #animationContainer {
-      width: 300px;
-      height: 300px;
-      margin: 20px auto;
-      background: #f0f0f0;
-      border-radius: 8px;
-    }
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    textarea { width: 90%; height: 100px; margin-bottom: 10px; }
+    .character-selection { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .char-thumb { width: 100px; height: 120px; border: 2px solid #ccc; border-radius: 8px; cursor: pointer; padding: 5px; }
+    .char-thumb.selected { border-color: #007bff; }
+    .char-name { font-size: 14px; margin-top: 5px; }
+    #animationContainer { width: 300px; height: 300px; margin: 20px auto; background: #f0f0f0; border-radius: 8px; }
   </style>
 </head>
 <body>
@@ -65,20 +34,70 @@
 <script>
   const characters = [
     {
-      name: "Boss",
-      thumbnails: "https://assets4.lottiefiles.com/packages/lf20_1pxqjqps.json",
+      name: "Seller",
+      gender: "female",
+      thumbnails: "https://assets5.lottiefiles.com/packages/lf20_qp1q7mct.json",
       animations: {
-        talking: "https://assets4.lottiefiles.com/packages/lf20_1pxqjqps.json"
-      },
-      voice: "Brian"
+        talking: "https://assets5.lottiefiles.com/packages/lf20_qp1q7mct.json",
+        happy: "https://assets2.lottiefiles.com/packages/lf20_kxsd2ytq.json",
+        sad: "https://assets9.lottiefiles.com/packages/lf20_t9gkkhz4.json",
+        angry: "https://assets1.lottiefiles.com/packages/lf20_jfqtzsym.json"
+      }
     },
     {
-      name: "Seller",
+      name: "Boss",
+      gender: "male",
+      thumbnails: "https://assets4.lottiefiles.com/packages/lf20_1pxqjqps.json",
+      animations: {
+        talking: "https://assets4.lottiefiles.com/packages/lf20_1pxqjqps.json",
+        happy: "https://assets2.lottiefiles.com/packages/lf20_z9ed2jna.json",
+        sad: "https://assets9.lottiefiles.com/packages/lf20_t9gkkhz4.json",
+        angry: "https://assets10.lottiefiles.com/packages/lf20_ytkgjs1h.json"
+      }
+    },
+    {
+      name: "Teacher",
+      gender: "female",
+      thumbnails: "https://assets9.lottiefiles.com/private_files/lf30_editor_wku9i7fj.json",
+      animations: {
+        talking: "https://assets9.lottiefiles.com/private_files/lf30_editor_wku9i7fj.json",
+        happy: "https://assets1.lottiefiles.com/packages/lf20_w51pcehl.json",
+        sad: "https://assets9.lottiefiles.com/packages/lf20_t9gkkhz4.json",
+        angry: "https://assets3.lottiefiles.com/packages/lf20_zryafqt9.json"
+      }
+    },
+    {
+      name: "Student",
+      gender: "male",
+      thumbnails: "https://assets10.lottiefiles.com/packages/lf20_7gofguxa.json",
+      animations: {
+        talking: "https://assets10.lottiefiles.com/packages/lf20_7gofguxa.json",
+        happy: "https://assets4.lottiefiles.com/private_files/lf30_m6j5igxb.json",
+        sad: "https://assets9.lottiefiles.com/packages/lf20_t9gkkhz4.json",
+        angry: "https://assets2.lottiefiles.com/packages/lf20_dyqjlxzc.json"
+      }
+    },
+    {
+      name: "Man",
+      gender: "male",
+      thumbnails: "https://assets9.lottiefiles.com/packages/lf20_V9t630.json",
+      animations: {
+        talking: "https://assets9.lottiefiles.com/packages/lf20_V9t630.json",
+        happy: "https://assets1.lottiefiles.com/packages/lf20_lk80fpsm.json",
+        sad: "https://assets9.lottiefiles.com/packages/lf20_t9gkkhz4.json",
+        angry: "https://assets4.lottiefiles.com/packages/lf20_cukfqhpy.json"
+      }
+    },
+    {
+      name: "Woman",
+      gender: "female",
       thumbnails: "https://assets3.lottiefiles.com/private_files/lf30_editor_pzjcpmra.json",
       animations: {
-        talking: "https://assets3.lottiefiles.com/private_files/lf30_editor_pzjcpmra.json"
-      },
-      voice: "Emma"
+        talking: "https://assets3.lottiefiles.com/private_files/lf30_editor_pzjcpmra.json",
+        happy: "https://assets4.lottiefiles.com/packages/lf20_2nblgysj.json",
+        sad: "https://assets9.lottiefiles.com/packages/lf20_t9gkkhz4.json",
+        angry: "https://assets4.lottiefiles.com/packages/lf20_xtz5gwdz.json"
+      }
     }
   ];
 
@@ -93,6 +112,14 @@
   let currentAnimation = null;
   let selectedCharacterIndex = 0;
 
+  function detectEmotion(text) {
+    const lower = text.toLowerCase();
+    if (lower.includes("happy")) return "happy";
+    if (lower.includes("sad")) return "sad";
+    if (lower.includes("angry") || lower.includes("mad")) return "angry";
+    return "talking";
+  }
+
   function loadCharacterThumbnails() {
     characters.forEach((char, i) => {
       const div = document.createElement('div');
@@ -104,7 +131,6 @@
       animDiv.style.height = '80px';
       div.appendChild(animDiv);
 
-      // Load Lottie animation inside thumbnail
       lottie.loadAnimation({
         container: animDiv,
         renderer: 'svg',
@@ -135,7 +161,7 @@
     thumbs[index].classList.add('selected');
   }
 
-  function playAnimation(character) {
+  function playAnimation(character, emotion) {
     if (currentAnimation) {
       currentAnimation.destroy();
     }
@@ -145,18 +171,18 @@
       renderer: 'svg',
       loop: true,
       autoplay: true,
-      path: character.animations.talking
+      path: character.animations[emotion] || character.animations['talking']
     });
   }
 
-  async function generateAudio(text, voice) {
-    const url = `https://api.streamelements.com/kappa/v2/speech?voice=${voice}&text=${encodeURIComponent(text)}`;
-    return url;
+  async function generateAudio(text, gender) {
+    const voice = gender === "male" ? "Brian" : "Emma";
+    return `https://api.streamelements.com/kappa/v2/speech?voice=${voice}&text=${encodeURIComponent(text)}`;
   }
 
   async function playAudio(url) {
     const audio = new Audio(url);
-    audio.play();
+    await audio.play();
   }
 
   function downloadFile(url, filename) {
@@ -173,7 +199,6 @@
 
     recorder.ondataavailable = e => chunks.push(e.data);
     recorder.start();
-
     await new Promise(resolve => setTimeout(resolve, durationSeconds * 1000));
     recorder.stop();
 
@@ -191,9 +216,10 @@
     if (!script) return alert("Please enter a script!");
 
     const character = characters[selectedCharacterIndex];
-    playAnimation(character);
+    const emotion = detectEmotion(script);
 
-    currentAudioUrl = await generateAudio(script, character.voice);
+    playAnimation(character, emotion);
+    currentAudioUrl = await generateAudio(script, character.gender);
     await playAudio(currentAudioUrl);
 
     downloadAudioBtn.disabled = false;
