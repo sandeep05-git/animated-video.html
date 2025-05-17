@@ -1,252 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Animated Video Generator</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
+  <script src="https://code.responsivevoice.org/responsivevoice.js?key=YOUR_KEY_HERE"></script>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 20px; }
-    textarea { width: 90%; height: 100px; margin-bottom: 10px; }
-    .character-selection { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-    .char-thumb { width: 100px; height: 120px; border: 2px solid #ccc; border-radius: 8px; cursor: pointer; padding: 5px; }
-    .char-thumb.selected { border-color: #007bff; }
-    .char-name { font-size: 14px; margin-top: 5px; }
-    #animationContainer { width: 300px; height: 300px; margin: 20px auto; background: #f0f0f0; border-radius: 8px; }
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    textarea { width: 100%; height: 100px; font-size: 16px; margin-bottom: 10px; }
+    select, button { font-size: 16px; margin: 5px 0; }
+    #animationContainer { width: 300px; height: 300px; margin: 20px auto; }
   </style>
 </head>
 <body>
 
-<h2>🎬 Create Your Animated Video</h2>
+  <h1>Animated Video Generator</h1>
 
-<textarea id="scriptInput" placeholder="Type your script here..."></textarea>
-<br>
+  <label>Enter Your Script:</label><br />
+  <textarea id="script" placeholder="Type your script here..."></textarea><br />
 
-<div class="character-selection" id="charactersDiv"></div>
+  <label>Select Language:</label><br />
+  <select id="language">
+    <option value="english">English</option>
+    <option value="hindi">Hindi</option>
+  </select><br />
 
-<br>
-<button id="generateBtn">Generate Video</button>
-<br><br>
-<div id="animationContainer"></div>
-<br>
-<button id="downloadAudioBtn" disabled>Download Audio</button>
-<button id="downloadVideoBtn" disabled>Download Video</button>
+  <label>Select Character:</label><br />
+  <select id="character">
+    <option value="seller">Seller</option>
+    <option value="boss">Boss</option>
+    <option value="teacher">Teacher</option>
+  </select><br />
 
-<script>
-  const characters = [
-    {
-      name: "Seller",
-      gender: "female",
-      thumbnails: "https://assets5.lottiefiles.com/packages/lf20_qp1q7mct.json",
-      animations: {
-        talking: "https://assets5.lottiefiles.com/packages/lf20_qp1q7mct.json",
-        happy: "https://assets2.lottiefiles.com/packages/lf20_kxsd2ytq.json",
-        sad: "https://assets9.lottiefiles.com/packages/lf20_t9gkkhz4.json",
-        angry: "https://assets1.lottiefiles.com/packages/lf20_jfqtzsym.json"
+  <label>Select Voice:</label><br />
+  <select id="voice">
+    <option value="male">Male</option>
+    <option value="female" selected>Female</option>
+  </select><br />
+
+  <button onclick="generateVideo()">Generate Video</button>
+
+  <div id="animationContainer"></div>
+
+  <script>
+    // Lottie animations mapped by character and emotion (these are example JSON URLs)
+    const animations = {
+      seller: {
+        happy: "https://assets10.lottiefiles.com/packages/lf20_0fhlytwe.json",
+        angry: "https://assets10.lottiefiles.com/packages/lf20_ku4u2vuw.json",
+        sad: "https://assets10.lottiefiles.com/packages/lf20_48rQrH.json",
+        neutral: "https://assets10.lottiefiles.com/packages/lf20_9chb8p4d.json"
+      },
+      boss: {
+        happy: "https://assets10.lottiefiles.com/packages/lf20_cnp6ttrz.json",
+        angry: "https://assets10.lottiefiles.com/packages/lf20_3p7yb6ld.json",
+        sad: "https://assets10.lottiefiles.com/packages/lf20_9c8lbv9t.json",
+        neutral: "https://assets10.lottiefiles.com/packages/lf20_2m9zxykc.json"
+      },
+      teacher: {
+        happy: "https://assets10.lottiefiles.com/packages/lf20_6ejtpztz.json",
+        angry: "https://assets10.lottiefiles.com/packages/lf20_ojcjxocd.json",
+        sad: "https://assets10.lottiefiles.com/packages/lf20_iq4juzid.json",
+        neutral: "https://assets10.lottiefiles.com/packages/lf20_1tnqccxe.json"
       }
-    },
-    {
-      name: "Boss",
-      gender: "male",
-      thumbnails: "https://assets4.lottiefiles.com/packages/lf20_1pxqjqps.json",
-      animations: {
-        talking: "https://assets4.lottiefiles.com/packages/lf20_1pxqjqps.json",
-        happy: "https://assets2.lottiefiles.com/packages/lf20_z9ed2jna.json",
-        sad: "https://assets9.lottiefiles.com/packages/lf20_t9gkkhz4.json",
-        angry: "https://assets10.lottiefiles.com/packages/lf20_ytkgjs1h.json"
-      }
-    },
-    {
-      name: "Teacher",
-      gender: "female",
-      thumbnails: "https://assets9.lottiefiles.com/private_files/lf30_editor_wku9i7fj.json",
-      animations: {
-        talking: "https://assets9.lottiefiles.com/private_files/lf30_editor_wku9i7fj.json",
-        happy: "https://assets1.lottiefiles.com/packages/lf20_w51pcehl.json",
-        sad: "https://assets9.lottiefiles.com/packages/lf20_t9gkkhz4.json",
-        angry: "https://assets3.lottiefiles.com/packages/lf20_zryafqt9.json"
-      }
-    },
-    {
-      name: "Student",
-      gender: "male",
-      thumbnails: "https://assets10.lottiefiles.com/packages/lf20_7gofguxa.json",
-      animations: {
-        talking: "https://assets10.lottiefiles.com/packages/lf20_7gofguxa.json",
-        happy: "https://assets4.lottiefiles.com/private_files/lf30_m6j5igxb.json",
-        sad: "https://assets9.lottiefiles.com/packages/lf20_t9gkkhz4.json",
-        angry: "https://assets2.lottiefiles.com/packages/lf20_dyqjlxzc.json"
-      }
-    },
-    {
-      name: "Man",
-      gender: "male",
-      thumbnails: "https://assets9.lottiefiles.com/packages/lf20_V9t630.json",
-      animations: {
-        talking: "https://assets9.lottiefiles.com/packages/lf20_V9t630.json",
-        happy: "https://assets1.lottiefiles.com/packages/lf20_lk80fpsm.json",
-        sad: "https://assets9.lottiefiles.com/packages/lf20_t9gkkhz4.json",
-        angry: "https://assets4.lottiefiles.com/packages/lf20_cukfqhpy.json"
-      }
-    },
-    {
-      name: "Woman",
-      gender: "female",
-      thumbnails: "https://assets3.lottiefiles.com/private_files/lf30_editor_pzjcpmra.json",
-      animations: {
-        talking: "https://assets3.lottiefiles.com/private_files/lf30_editor_pzjcpmra.json",
-        happy: "https://assets4.lottiefiles.com/packages/lf20_2nblgysj.json",
-        sad: "https://assets9.lottiefiles.com/packages/lf20_t9gkkhz4.json",
-        angry: "https://assets4.lottiefiles.com/packages/lf20_xtz5gwdz.json"
-      }
+    };
+
+    let currentAnimation;
+
+    function detectEmotion(text) {
+      text = text.toLowerCase();
+      // English keywords
+      if (text.match(/angry|mad|frustrated|furious|gussa|क्रोध/)) return "angry";
+      if (text.match(/happy|glad|joy|excited|खुश|उत्साहित/)) return "happy";
+      if (text.match(/sad|unhappy|depressed|down|निराश|उदास/)) return "sad";
+      return "neutral"; // default emotion
     }
-  ];
 
-  const charactersDiv = document.getElementById("charactersDiv");
-  const animationContainer = document.getElementById("animationContainer");
-  const scriptInput = document.getElementById("scriptInput");
-  const generateBtn = document.getElementById("generateBtn");
-  const downloadAudioBtn = document.getElementById("downloadAudioBtn");
-  const downloadVideoBtn = document.getElementById("downloadVideoBtn");
+    function getVoice(language, gender) {
+      if(language === "hindi") {
+        return gender === "male" ? "Hindi Male" : "Hindi Female";
+      }
+      // English voices on responsivevoice.org
+      if(language === "english") {
+        return gender === "male" ? "UK English Male" : "UK English Female";
+      }
+      return null;
+    }
 
-  let currentAudioUrl = "";
-  let currentAnimation = null;
-  let selectedCharacterIndex = 0;
-
-  function detectEmotion(text) {
-    const lower = text.toLowerCase();
-    if (lower.includes("happy")) return "happy";
-    if (lower.includes("sad")) return "sad";
-    if (lower.includes("angry") || lower.includes("mad")) return "angry";
-    return "talking";
-  }
-
-  function loadCharacterThumbnails() {
-    characters.forEach((char, i) => {
-      const div = document.createElement('div');
-      div.classList.add('char-thumb');
-      div.dataset.index = i;
-
-      const animDiv = document.createElement('div');
-      animDiv.style.width = '80px';
-      animDiv.style.height = '80px';
-      div.appendChild(animDiv);
-
-      lottie.loadAnimation({
-        container: animDiv,
+    function loadAnimation(character, emotion) {
+      if(currentAnimation) {
+        currentAnimation.destroy();
+      }
+      const animData = animations[character] && animations[character][emotion] ? animations[character][emotion] : animations[character]["neutral"];
+      currentAnimation = lottie.loadAnimation({
+        container: document.getElementById('animationContainer'),
         renderer: 'svg',
         loop: true,
         autoplay: true,
-        path: char.thumbnails
+        path: animData
       });
-
-      const nameSpan = document.createElement('div');
-      nameSpan.classList.add('char-name');
-      nameSpan.textContent = char.name;
-      div.appendChild(nameSpan);
-
-      div.addEventListener('click', () => {
-        selectCharacter(i);
-      });
-
-      charactersDiv.appendChild(div);
-    });
-
-    selectCharacter(0);
-  }
-
-  function selectCharacter(index) {
-    selectedCharacterIndex = index;
-    const thumbs = document.querySelectorAll('.char-thumb');
-    thumbs.forEach(thumb => thumb.classList.remove('selected'));
-    thumbs[index].classList.add('selected');
-  }
-
-  function playAnimation(character, emotion) {
-    if (currentAnimation) {
-      currentAnimation.destroy();
-    }
-    animationContainer.innerHTML = '';
-    currentAnimation = lottie.loadAnimation({
-      container: animationContainer,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      path: character.animations[emotion] || character.animations['talking']
-    });
-  }
-
-  async function generateAudio(text, gender) {
-    const voice = gender === "male" ? "Brian" : "Emma";
-    return `https://api.streamelements.com/kappa/v2/speech?voice=${voice}&text=${encodeURIComponent(text)}`;
-  }
-
-  async function playAudio(url) {
-    const audio = new Audio(url);
-    await audio.play();
-  }
-
-  function downloadFile(url, filename) {
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-  }
-
-  async function recordVideo(durationSeconds = 10) {
-    const stream = animationContainer.captureStream();
-    const recorder = new MediaRecorder(stream);
-    const chunks = [];
-
-    recorder.ondataavailable = e => chunks.push(e.data);
-    recorder.start();
-    await new Promise(resolve => setTimeout(resolve, durationSeconds * 1000));
-    recorder.stop();
-
-    return new Promise(resolve => {
-      recorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'video/webm' });
-        const url = URL.createObjectURL(blob);
-        resolve(url);
-      };
-    });
-  }
-
-  generateBtn.addEventListener('click', async () => {
-    const script = scriptInput.value.trim();
-    if (!script) return alert("Please enter a script!");
-
-    const character = characters[selectedCharacterIndex];
-    const emotion = detectEmotion(script);
-
-    playAnimation(character, emotion);
-    currentAudioUrl = await generateAudio(script, character.gender);
-    await playAudio(currentAudioUrl);
-
-    downloadAudioBtn.disabled = false;
-    downloadVideoBtn.disabled = false;
-  });
-
-  downloadAudioBtn.addEventListener('click', () => {
-    if (currentAudioUrl) {
-      downloadFile(currentAudioUrl, 'audio.mp3');
-    }
-  });
-
-  downloadVideoBtn.addEventListener('click', async () => {
-    downloadVideoBtn.textContent = "Recording...";
-    downloadVideoBtn.disabled = true;
-
-    const videoUrl = await recordVideo(10);
-    if (videoUrl) {
-      downloadFile(videoUrl, "animation.webm");
     }
 
-    downloadVideoBtn.textContent = "Download Video";
-    downloadVideoBtn.disabled = false;
-  });
+    function generateVideo() {
+      const scriptText = document.getElementById("script").value.trim();
+      if (!scriptText) {
+        alert("Please enter your script!");
+        return;
+      }
+      const language = document.getElementById("language").value;
+      const character = document.getElementById("character").value;
+      const voiceGender = document.getElementById("voice").value;
 
-  loadCharacterThumbnails();
-</script>
+      const emotion = detectEmotion(scriptText);
+      loadAnimation(character, emotion);
+
+      const voice = getVoice(language, voiceGender);
+      if(!voice) {
+        alert("Voice not found for selected language/gender!");
+        return;
+      }
+
+      responsiveVoice.speak(scriptText, voice);
+    }
+  </script>
 
 </body>
 </html>
