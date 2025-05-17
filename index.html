@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Animated Audio Generator</title>
+  <meta charset="UTF-8" />
+  <title>Text to Speech MP3 Generator</title>
 </head>
 <body>
-  <h2>🎤 Enter Script and Download Speech Audio</h2>
+  <h2>🎤 Enter Script and Generate MP3</h2>
 
-  <textarea id="script" rows="5" cols="60" placeholder="Enter your script here...">नमस्ते! मैं आपकी सहायता के लिए यहाँ हूँ।</textarea><br><br>
+  <textarea id="script" rows="5" cols="60" placeholder="Enter your script here...">Hello boss, this audio will be downloaded as MP3.</textarea><br><br>
 
   <label for="language">🌐 Select Language:</label>
   <select id="language">
@@ -19,92 +19,72 @@
     <option value="mr-IN">Marathi</option>
   </select><br><br>
 
-  <button id="generate">▶️ Generate & Play</button>
-  <button id="download" style="display:none;">⬇️ Download Audio</button>
+  <button id="generate">▶️ Generate & Download MP3</button>
 
+  <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.0/lame.min.js"></script>
   <script>
     const generateBtn = document.getElementById('generate');
-    const downloadBtn = document.getElementById('download');
-    const textarea = document.getElementById('script');
-    const language = document.getElementById('language');
-
-    let audioBlob = null;
 
     function getVoiceByLang(lang) {
-      return speechSynthesis.getVoices().find(voice => voice.lang === lang);
+      return speechSynthesis.getVoices().find(v => v.lang === lang);
     }
 
     generateBtn.onclick = async () => {
-      const text = textarea.value.trim();
-      const lang = language.value;
-      if (!text) return alert("Please enter script text.");
+      const text = document.getElementById('script').value.trim();
+      const lang = document.getElementById('language').value;
+      if (!text) return alert("Enter your script first!");
 
-      // Prepare audio context
-      const audioContext = new AudioContext();
-      const dest = audioContext.createMediaStreamDestination();
-      const mediaRecorder = new MediaRecorder(dest.stream);
-      const audioChunks = [];
-
-      mediaRecorder.ondataavailable = event => {
-        if (event.data.size > 0) audioChunks.push(event.data);
-      };
-
-      mediaRecorder.onstop = () => {
-        audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-        downloadBtn.style.display = 'inline-block';
-      };
-
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = lang;
+      const synth = window.speechSynthesis;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = lang;
       const selectedVoice = getVoiceByLang(lang);
-      if (selectedVoice) utterance.voice = selectedVoice;
+      if (selectedVoice) utter.voice = selectedVoice;
 
-      // Web Speech API Hack to route audio
-      const synth = speechSynthesis;
-      const utterThis = utterance;
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const dest = audioCtx.createMediaStreamDestination();
+      const mediaRecorder = new MediaRecorder(dest.stream);
+      const chunks = [];
 
-      const source = audioContext.createMediaStreamSource(dest.stream);
-      const gainNode = audioContext.createGain();
-      gainNode.gain.value = 1;
-      gainNode.connect(audioContext.destination);
+      mediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
 
-      // Connect speech to audio context
-      const audio = new Audio();
-      const utterAudio = new SpeechSynthesisUtterance(text);
-      utterAudio.lang = lang;
-      if (selectedVoice) utterAudio.voice = selectedVoice;
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(chunks);
+        const arrayBuffer = await blob.arrayBuffer();
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
 
-      const synthAudio = new SpeechSynthesisUtterance();
-      const dummy = new SpeechSynthesisUtterance();
-      dummy.text = '';
-      speechSynthesis.speak(dummy); // Required hack for Chrome
+        const samples = audioBuffer.getChannelData(0);
+        const mp3encoder = new lamejs.Mp3Encoder(1, audioBuffer.sampleRate, 128);
+        const mp3Data = [];
 
-      const utteranceClone = new SpeechSynthesisUtterance(text);
-      utteranceClone.lang = lang;
-      if (selectedVoice) utteranceClone.voice = selectedVoice;
+        const sampleBlockSize = 1152;
+        for (let i = 0; i < samples.length; i += sampleBlockSize) {
+          const sampleChunk = samples.subarray(i, i + sampleBlockSize);
+          const mp3buf = mp3encoder.encodeBuffer(sampleChunk);
+          if (mp3buf.length > 0) mp3Data.push(mp3buf);
+        }
 
-      // Connect system voice to audio context (only modern browsers)
-      const oscillator = audioContext.createOscillator();
-      oscillator.connect(dest);
-      oscillator.start();
-      oscillator.stop(audioContext.currentTime + 0.001); // hack to activate stream
+        const mp3buf = mp3encoder.flush();
+        if (mp3buf.length > 0) mp3Data.push(mp3buf);
 
+        const mp3Blob = new Blob(mp3Data, { type: 'audio/mp3' });
+        const url = URL.createObjectURL(mp3Blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "speech_output.mp3";
+        a.click();
+      };
+
+      const source = audioCtx.createMediaStreamSource(dest);
+      source.connect(audioCtx.destination);
       mediaRecorder.start();
 
-      utteranceClone.onend = () => {
+      utter.onend = () => {
         mediaRecorder.stop();
       };
 
-      speechSynthesis.speak(utteranceClone);
-    };
-
-    downloadBtn.onclick = () => {
-      if (!audioBlob) return alert("No audio to download.");
-      const url = URL.createObjectURL(audioBlob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'voice_output.wav';
-      a.click();
+      synth.speak(utter);
     };
 
     // Load voices
