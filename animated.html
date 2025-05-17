@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Animated Video Generator</title>
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    textarea, select, button { width: 100%; margin-top: 10px; padding: 10px; font-size: 16px; }
+    .preview { text-align: center; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>🎙️ Animated Video Generator</h1>
+
+  <textarea id="script" placeholder="Enter your script here..." rows="5"></textarea>
+
+  <select id="character">
+    <option value="teacher">👩‍🏫 Teacher</option>
+    <option value="seller">🛍️ Seller</option>
+    <option value="boss">👔 Boss</option>
+  </select>
+
+  <button onclick="generateVideo()">Generate Video</button>
+
+  <div class="preview" id="animation-container">
+    <lottie-player id="anim" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>
+    <audio id="audio" controls style="margin-top: 20px;"></audio>
+  </div>
+
+  <script>
+    const characterAnimations = {
+      teacher: "https://assets10.lottiefiles.com/packages/lf20_teacher.json",
+      seller: "https://assets1.lottiefiles.com/packages/lf20_online_seller.json",
+      boss: "https://assets6.lottiefiles.com/packages/lf20_boss_animation.json",
+    };
+
+    function generateVideo() {
+      const script = document.getElementById("script").value;
+      const character = document.getElementById("character").value;
+
+      // Set the animation
+      const anim = document.getElementById("anim");
+      anim.setAttribute("src", characterAnimations[character]);
+
+      // Generate TTS audio
+      const audioUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=${encodeURIComponent(script)}`;
+      document.getElementById("audio").src = audioUrl;
+    }
+  </script>
+</body>
+</html>
