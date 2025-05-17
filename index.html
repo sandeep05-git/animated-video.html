@@ -1,158 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Animated Video Generator</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
-<script src="https://code.responsivevoice.org/responsivevoice.js"></script>
-<style>
-  body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
-  textarea { width: 100%; height: 100px; font-size: 16px; padding: 8px; }
-  select, button { font-size: 16px; margin: 10px 5px 20px 0; padding: 8px; }
-  #animationContainer { width: 300px; height: 300px; margin: 0 auto; border: 1px solid #ccc; }
-</style>
+  <meta charset="UTF-8">
+  <title>Multilingual TTS with Manual Audio Download</title>
 </head>
 <body>
+  <h2>Enter Script for Audio & Download</h2>
+  <textarea id="script" rows="5" cols="60" placeholder="Enter your script here...">नमस्ते! मैं आपका ऑनलाइन सपोर्ट बॉट हूँ।</textarea><br><br>
 
-<h2>Animated Video Generator</h2>
+  <label for="language">Select Language:</label>
+  <select id="language">
+    <option value="en-US">English (US)</option>
+    <option value="en-GB">English (UK)</option>
+    <option value="hi-IN">Hindi (India)</option>
+    <option value="ta-IN">Tamil</option>
+    <option value="te-IN">Telugu</option>
+    <option value="mr-IN">Marathi</option>
+  </select><br><br>
 
-<textarea id="script" placeholder="Enter your script here..."></textarea><br/>
+  <button id="play">Speak & Record</button>
+  <button id="stop" disabled>Stop</button>
+  <button id="download" style="display: none;">Download Audio</button>
 
-<label for="character">Choose Character:</label>
-<select id="character">
-  <option value="seller">Seller</option>
-  <option value="boss">Boss</option>
-  <option value="teacher">Teacher</option>
-  <option value="customer">Customer</option>
-  <option value="support">Support</option>
-  <option value="manager">Manager</option>
-</select>
+  <script>
+    let mediaRecorder;
+    let audioChunks = [];
+    let audioBlob;
 
-<label for="voice">Choose Voice:</label>
-<select id="voice">
-  <option value="UK English Female">Female (UK)</option>
-  <option value="UK English Male">Male (UK)</option>
-  <option value="US English Female">Female (US)</option>
-  <option value="US English Male">Male (US)</option>
-</select>
+    const playBtn = document.getElementById('play');
+    const stopBtn = document.getElementById('stop');
+    const downloadBtn = document.getElementById('download');
+    const textArea = document.getElementById('script');
+    const langSelect = document.getElementById('language');
 
-<button onclick="generate()">Generate Video</button>
-
-<div id="animationContainer"></div>
-
-<script>
-  // Animation URLs for characters and emotions
-  const animations = {
-    seller: {
-      happy: "https://assets10.lottiefiles.com/packages/lf20_0fhlytwe.json",
-      angry: "https://assets10.lottiefiles.com/packages/lf20_ku4u2vuw.json",
-      neutral: "https://assets10.lottiefiles.com/packages/lf20_9chb8p4d.json"
-    },
-    boss: {
-      happy: "https://assets10.lottiefiles.com/packages/lf20_iwmd6pyr.json",
-      angry: "https://assets10.lottiefiles.com/packages/lf20_1pxqjqps.json",
-      neutral: "https://assets10.lottiefiles.com/packages/lf20_yv5qkvcx.json"
-    },
-    teacher: {
-      happy: "https://assets10.lottiefiles.com/packages/lf20_4kx2q32n.json",
-      angry: "https://assets10.lottiefiles.com/packages/lf20_fymkizuj.json",
-      neutral: "https://assets10.lottiefiles.com/packages/lf20_5i0g1xhv.json"
-    },
-    customer: {
-      happy: "https://assets10.lottiefiles.com/packages/lf20_8jrj9zvl.json",
-      angry: "https://assets10.lottiefiles.com/packages/lf20_0jxqoyhq.json",
-      neutral: "https://assets10.lottiefiles.com/packages/lf20_yv5qkvcx.json"
-    },
-    support: {
-      happy: "https://assets10.lottiefiles.com/packages/lf20_jcikwtux.json",
-      angry: "https://assets10.lottiefiles.com/packages/lf20_6tfjf3hw.json",
-      neutral: "https://assets10.lottiefiles.com/packages/lf20_4p9d4wdr.json"
-    },
-    manager: {
-      happy: "https://assets10.lottiefiles.com/packages/lf20_1b4fxvn6.json",
-      angry: "https://assets10.lottiefiles.com/packages/lf20_7q4vmo0r.json",
-      neutral: "https://assets10.lottiefiles.com/packages/lf20_kbpcgn3n.json"
-    }
-  };
-
-  let animation;
-
-  function detectEmotion(text) {
-    text = text.toLowerCase();
-    if (text.includes("happy") || text.includes("great") || text.includes("good") || text.includes("awesome")) return "happy";
-    if (text.includes("angry") || text.includes("bad") || text.includes("frustrated") || text.includes("upset")) return "angry";
-    return "neutral";
-  }
-
-  function generate() {
-    const text = document.getElementById("script").value.trim();
-    if (!text) {
-      alert("Please enter your script.");
-      return;
+    function getVoiceByLang(lang) {
+      return speechSynthesis.getVoices().find(voice => voice.lang === lang);
     }
 
-    const character = document.getElementById("character").value;
-    const voice = document.getElementById("voice").value;
-    const emotion = detectEmotion(text);
+    playBtn.onclick = async () => {
+      const lang = langSelect.value;
+      const text = textArea.value.trim();
+      if (!text) return alert("Please enter some script text.");
 
-    if (animation) animation.destroy();
-
-    animation = lottie.loadAnimation({
-      container: document.getElementById("animationContainer"),
-      renderer: "svg",
-      loop: true,
-      autoplay: true,
-      path: animations[character][emotion]
-    });
-
-    responsiveVoice.speak(text, voice);
-  }
-</script>
-  <button id="startRec">Start Speaking & Recording</button>
-<button id="stopRec" disabled>Stop & Download</button>
-
-<script>
-  let mediaRecorder;
-  let audioChunks = [];
-
-  document.getElementById('startRec').onclick = () => {
-    if (!window.MediaRecorder) {
-      alert("Your browser does not support MediaRecorder API");
-      return;
-    }
-
-    // Start TTS speaking
-    responsiveVoice.speak("Hello boss, this is your recorded audio.", "UK English Female");
-
-    // Get audio stream from system output (chrome only supports tab capture for this)
-    navigator.mediaDevices.getDisplayMedia({audio: true, video: false}).then(stream => {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder = new MediaRecorder(stream);
-      mediaRecorder.start();
       audioChunks = [];
+      audioBlob = null;
 
-      mediaRecorder.ondataavailable = event => {
-        audioChunks.push(event.data);
+      mediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) audioChunks.push(e.data);
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunks, {type: 'audio/wav'});
-        const url = URL.createObjectURL(audioBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = "script_audio.wav";
-        a.click();
-        URL.revokeObjectURL(url);
+        audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        downloadBtn.style.display = 'inline-block';
+        stream.getTracks().forEach(track => track.stop());
       };
 
-      document.getElementById('stopRec').disabled = false;
-    }).catch(err => alert("Audio capture permission denied or not supported: " + err));
-  };
+      mediaRecorder.start();
 
-  document.getElementById('stopRec').onclick = () => {
-    mediaRecorder.stop();
-    document.getElementById('stopRec').disabled = true;
-  };
-</script>
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = lang;
 
+      const selectedVoice = getVoiceByLang(lang);
+      if (selectedVoice) utter.voice = selectedVoice;
+
+      speechSynthesis.speak(utter);
+
+      utter.onend = () => {
+        mediaRecorder.stop();
+        stopBtn.disabled = true;
+      };
+
+      stopBtn.disabled = false;
+    };
+
+    stopBtn.onclick = () => {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        stopBtn.disabled = true;
+      }
+    };
+
+    downloadBtn.onclick = () => {
+      if (!audioBlob) return alert("No audio recorded yet.");
+      const url = URL.createObjectURL(audioBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'script_audio.wav';
+      a.click();
+    };
+
+    window.speechSynthesis.onvoiceschanged = () => {};
+  </script>
 </body>
 </html>
