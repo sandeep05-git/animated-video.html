@@ -2,50 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Animated Video Generator</title>
+  <title>Animated Video Creator</title>
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <style>
-    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    textarea, select, button { width: 100%; margin-top: 10px; padding: 10px; font-size: 16px; }
-    .preview { text-align: center; margin-top: 20px; }
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 30px auto; padding: 0 20px; }
+    textarea, select, button { width: 100%; margin-top: 15px; padding: 10px; font-size: 16px; }
+    #animation { margin-top: 25px; text-align: center; }
   </style>
 </head>
 <body>
-  <h1>🎙️ Animated Video Generator</h1>
+  <h1>Animated Video Creator</h1>
 
-  <textarea id="script" placeholder="Enter your script here..." rows="5"></textarea>
+  <textarea id="scriptInput" placeholder="Enter your text here..." rows="5"></textarea>
 
-  <select id="character">
-    <option value="teacher">👩‍🏫 Teacher</option>
-    <option value="seller">🛍️ Seller</option>
-    <option value="boss">👔 Boss</option>
+  <select id="characterSelect">
+    <option value="teacher">Teacher</option>
+    <option value="seller">Seller</option>
+    <option value="boss">Boss</option>
   </select>
 
-  <button onclick="generateVideo()">Generate Video</button>
+  <button onclick="createVideo()">Generate Video</button>
 
-  <div class="preview" id="animation-container">
-    <lottie-player id="anim" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>
-    <audio id="audio" controls style="margin-top: 20px;"></audio>
+  <div id="animation">
+    <lottie-player
+      id="lottieAnim"
+      background="transparent"
+      speed="1"
+      style="width: 300px; height: 300px;"
+      loop autoplay
+    ></lottie-player>
+    <audio id="audioPlayer" controls style="width: 100%; margin-top: 20px;"></audio>
   </div>
 
   <script>
     const animations = {
-  teacher: 'https://assets10.lottiefiles.com/packages/lf20_teacher.json',
-  seller: 'https://assets8.lottiefiles.com/packages/lf20_nkzbbd9y.json', // updated seller animation URL
-  boss: 'https://assets6.lottiefiles.com/packages/lf20_boss_animation.json',
-};
+      teacher: 'https://assets10.lottiefiles.com/packages/lf20_teacher.json',
+      seller: 'https://assets8.lottiefiles.com/packages/lf20_nkzbbd9y.json',
+      boss: 'https://assets6.lottiefiles.com/packages/lf20_boss_animation.json',
+    };
 
-    function generateVideo() {
-      const script = document.getElementById("script").value;
-      const character = document.getElementById("character").value;
+    function createVideo() {
+      const text = document.getElementById('scriptInput').value.trim();
+      if (!text) {
+        alert('Please enter some text!');
+        return;
+      }
 
-      // Set the animation
-      const anim = document.getElementById("anim");
-      anim.setAttribute("src", characterAnimations[character]);
+      const character = document.getElementById('characterSelect').value;
+      const lottiePlayer = document.getElementById('lottieAnim');
+      const audioPlayer = document.getElementById('audioPlayer');
 
-      // Generate TTS audio
-      const audioUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=${encodeURIComponent(script)}`;
-      document.getElementById("audio").src = audioUrl;
+      // Set the animation JSON URL
+      const animationUrl = animations[character];
+      if (!animationUrl) {
+        alert('Animation not found for the selected character!');
+        return;
+      }
+      lottiePlayer.setAttribute('src', animationUrl);
+
+      // Generate TTS audio URL using StreamElements API
+      const audioUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=${encodeURIComponent(text)}`;
+      audioPlayer.src = audioUrl;
+      audioPlayer.play();
     }
   </script>
 </body>
