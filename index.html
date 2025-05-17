@@ -3,17 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <title>Animated Video Creator</title>
+
+  <!-- Lottie Player Script -->
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 30px auto; padding: 0 20px; }
-    textarea, select, button { width: 100%; margin-top: 15px; padding: 10px; font-size: 16px; }
-    #animation { margin-top: 25px; text-align: center; }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    textarea, select, button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    #animation {
+      margin-top: 25px;
+      text-align: center;
+    }
+
+    lottie-player {
+      width: 300px;
+      height: 300px;
+      margin: auto;
+    }
   </style>
 </head>
 <body>
   <h1>Animated Video Creator</h1>
 
-  <textarea id="scriptInput" placeholder="Enter your text here..." rows="5"></textarea>
+  <textarea id="scriptInput" placeholder="Enter your text here..." rows="4"></textarea>
 
   <select id="characterSelect">
     <option value="teacher">Teacher</option>
@@ -23,44 +47,44 @@
 
   <button onclick="createVideo()">Generate Video</button>
 
-  <div id="animation"></div>
+  <div id="animation">
+    <!-- Animation will appear here -->
+  </div>
 
   <audio id="audioPlayer" controls style="width: 100%; margin-top: 20px;"></audio>
 
   <script>
     const animations = {
-      teacher: 'https://assets10.lottiefiles.com/packages/lf20_teacher.json',
+      teacher: 'https://assets10.lottiefiles.com/packages/lf20_x62chJ.json',
       seller: 'https://assets8.lottiefiles.com/packages/lf20_nkzbbd9y.json',
-      boss: 'https://assets6.lottiefiles.com/packages/lf20_boss_animation.json',
+      boss: 'https://assets6.lottiefiles.com/packages/lf20_jcikwtux.json'
     };
 
     function createVideo() {
       const text = document.getElementById('scriptInput').value.trim();
       const character = document.getElementById('characterSelect').value;
+      const animationDiv = document.getElementById('animation');
+      const audioPlayer = document.getElementById('audioPlayer');
 
       if (!text) {
-        alert('Please enter some text!');
+        alert('Please enter your script text!');
         return;
       }
 
-      const animationUrl = animations[character];
-      const animationContainer = document.getElementById('animation');
-      const audioPlayer = document.getElementById('audioPlayer');
+      const animUrl = animations[character];
 
-      // Clear previous animation
-      animationContainer.innerHTML = '';
+      // Clear any previous animation
+      animationDiv.innerHTML = '';
 
-      // Create and add a new Lottie player
-      const lottiePlayer = document.createElement('lottie-player');
-      lottiePlayer.setAttribute('src', animationUrl);
-      lottiePlayer.setAttribute('background', 'transparent');
-      lottiePlayer.setAttribute('speed', '1');
-      lottiePlayer.setAttribute('loop', '');
-      lottiePlayer.setAttribute('autoplay', '');
-      lottiePlayer.style.width = '300px';
-      lottiePlayer.style.height = '300px';
+      // Create new animation player
+      const player = document.createElement('lottie-player');
+      player.setAttribute('src', animUrl);
+      player.setAttribute('background', 'transparent');
+      player.setAttribute('speed', '1');
+      player.setAttribute('loop', '');
+      player.setAttribute('autoplay', '');
 
-      animationContainer.appendChild(lottiePlayer);
+      animationDiv.appendChild(player);
 
       // Set and play audio
       const audioUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=${encodeURIComponent(text)}`;
