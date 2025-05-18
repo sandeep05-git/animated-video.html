@@ -44,11 +44,11 @@ app.post('/generate-audio', async (req, res) => {
     });
 
     if (!response.ok) {
-      const err = await response.json();
-      return res.status(500).json({ error: err.message || "Audio generation failed" });
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
+  const errorBody = await response.json();
+  console.error('ElevenLabs API error:', errorBody);
+  return res.status(response.status).json({ error: errorBody });
+}
+const arrayBuffer = await response.arrayBuffer();
     res.set({
       'Content-Type': 'audio/mpeg',
       'Content-Disposition': 'attachment; filename="script_audio.mp3"'
