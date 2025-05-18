@@ -27,77 +27,77 @@
   <button id="generateBtn">▶️ Generate & Listen</button>
   <button id="downloadBtn" disabled>⬇️ Download MP3</button>
 
-  <script>
-    let audioURL = null;
-    let audioPlayer = null;
+ <script>
+  let audioURL = null;
+  let audioPlayer = null;
 
-    const generateBtn = document.getElementById('generateBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
+  const generateBtn = document.getElementById('generateBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
 
-    generateBtn.onclick = async () => {
-      const script = document.getElementById('script').value.trim();
-      const language = document.getElementById('language').value;
+  generateBtn.onclick = async () => {
+    const script = document.getElementById('script').value.trim();
+    const language = document.getElementById('language').value;
 
-      if (!script) {
-        alert("Please enter a script.");
-        return;
-      }
+    if (!script) {
+      alert("Please enter a script.");
+      return;
+    }
 
-      generateBtn.disabled = true;
-      generateBtn.textContent = '⏳ Generating...';
-      downloadBtn.disabled = true;
+    generateBtn.disabled = true;
+    generateBtn.textContent = '⏳ Generating...';
+    downloadBtn.disabled = true;
 
-      try {
-        const response = await fetch('http://localhost:3000/generate-audio', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ script, language })
-        });
+    try {
+      const response = await fetch('http://localhost:3000/generate-audio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ script, language })
+      });
 
-        if (!response.ok) {
-  let errorText = '';
-  try {
-    const errJson = await response.json();
-    errorText = errJson.error || JSON.stringify(errJson);
-  } catch {
-    errorText = await response.text();
-  }
-  alert("Error from server: " + (errorText || `Status ${response.status}: ${response.statusText}`));
-  return;
-}
-const blob = await response.blob();
-
-        if (audioURL) URL.revokeObjectURL(audioURL);
-        audioURL = URL.createObjectURL(blob);
-
-        // Stop previous audio if playing
-        if (audioPlayer) {
-          audioPlayer.pause();
-          audioPlayer = null;
+      if (!response.ok) {
+        // Try to get detailed error info from response
+        let errorDetails = "";
+        try {
+          const errorJson = await response.json();
+          errorDetails = JSON.stringify(errorJson);
+        } catch {
+          errorDetails = await response.text();
         }
-
-        // Create new audio and play
-        audioPlayer = new Audio(audioURL);
-        audioPlayer.play();
-
-        // Enable download button now
-        downloadBtn.disabled = false;
-
-      } catch (error) {
-        alert("Error: " + error.message);
-      } finally {
-        generateBtn.disabled = false;
-        generateBtn.textContent = '▶️ Generate & Listen';
+        throw new Error(`Server returned ${response.status} ${response.statusText}: ${errorDetails}`);
       }
-    };
 
-    downloadBtn.onclick = () => {
-      if (!audioURL) return;
-      const a = document.createElement('a');
-      a.href = audioURL;
-      a.download = 'script_audio.mp3';
-      a.click();
-    };
-  </script>
+      const blob = await response.blob();
+
+      if (audioURL) URL.revokeObjectURL(audioURL);
+      audioURL = URL.createObjectURL(blob);
+
+      if (audioPlayer) {
+        audioPlayer.pause();
+        audioPlayer = null;
+      }
+
+      audioPlayer = new Audio(audioURL);
+      audioPlayer.play();
+
+      downloadBtn.disabled = false;
+
+    } catch (error) {
+      console.error("Error generating audio:", error);
+      alert("Detailed Error: " + error.message);
+    } finally {
+      generateBtn.disabled = false;
+      generateBtn.textContent = '▶️ Generate & Listen';
+    }
+  };
+
+  downloadBtn.onclick = () => {
+    if (!audioURL) return;
+    const a = document.createElement('a');
+    a.href = audioURL;
+    a.download = 'script_audio.mp3';
+    a.click();
+  };
+</script>
+  
 </body>
 </html>
