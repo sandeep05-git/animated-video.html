@@ -1,94 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Text to Speech MP3 Generator</title>
+  <meta charset="UTF-8">
+  <title>Script to MP3 (Multilingual + Emotion)</title>
 </head>
 <body>
-  <h2>🎤 Enter Script and Generate MP3</h2>
+  <h2>🎤 Enter Script</h2>
 
-  <textarea id="script" rows="5" cols="60" placeholder="Enter your script here...">Hello boss, this audio will be downloaded as MP3.</textarea><br><br>
+  <textarea id="script" rows="5" cols="60" placeholder="Enter your script here...">Hello boss, I am very happy to work with you!</textarea><br><br>
 
   <label for="language">🌐 Select Language:</label>
   <select id="language">
-    <option value="en-US">English (US)</option>
-    <option value="en-GB">English (UK)</option>
-    <option value="hi-IN">Hindi</option>
-    <option value="ta-IN">Tamil</option>
-    <option value="te-IN">Telugu</option>
-    <option value="mr-IN">Marathi</option>
+    <option value="en">English</option>
+    <option value="hi">Hindi</option>
+    <option value="ta">Tamil</option>
+    <option value="te">Telugu</option>
+    <option value="mr">Marathi</option>
   </select><br><br>
 
-  <button id="generate">▶️ Generate & Download MP3</button>
+  <button onclick="generateAudio()">▶️ Generate & Download MP3</button>
 
-  <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.0/lame.min.js"></script>
   <script>
-    const generateBtn = document.getElementById('generate');
+    async function generateAudio() {
+      const script = document.getElementById("script").value.trim();
+      const language = document.getElementById("language").value;
+      const apiKey = "YOUR_API_KEY_HERE"; // Replace with your private key
 
-    function getVoiceByLang(lang) {
-      return speechSynthesis.getVoices().find(v => v.lang === lang);
-    }
+      if (!script) return alert("Please enter a script.");
 
-    generateBtn.onclick = async () => {
-      const text = document.getElementById('script').value.trim();
-      const lang = document.getElementById('language').value;
-      if (!text) return alert("Enter your script first!");
-
-      const synth = window.speechSynthesis;
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = lang;
-      const selectedVoice = getVoiceByLang(lang);
-      if (selectedVoice) utter.voice = selectedVoice;
-
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const dest = audioCtx.createMediaStreamDestination();
-      const mediaRecorder = new MediaRecorder(dest.stream);
-      const chunks = [];
-
-      mediaRecorder.ondataavailable = e => {
-        if (e.data.size > 0) chunks.push(e.data);
+      // Pick voice ID based on language (multilingual voices)
+      const voiceByLanguage = {
+        "en": "21m00Tcm4TlvDq8ikWAM", // Rachel - Multilingual
+        "hi": "21m00Tcm4TlvDq8ikWAM",
+        "ta": "21m00Tcm4TlvDq8ikWAM",
+        "te": "21m00Tcm4TlvDq8ikWAM",
+        "mr": "21m00Tcm4TlvDq8ikWAM"
       };
+      const voiceId = voiceByLanguage[language];
 
-      mediaRecorder.onstop = async () => {
-        const blob = new Blob(chunks);
-        const arrayBuffer = await blob.arrayBuffer();
-        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+      // Emotion detection (very basic)
+      const lowerScript = script.toLowerCase();
+      let stability = 0.5;
+      let similarity_boost = 0.75;
 
-        const samples = audioBuffer.getChannelData(0);
-        const mp3encoder = new lamejs.Mp3Encoder(1, audioBuffer.sampleRate, 128);
-        const mp3Data = [];
+      if (lowerScript.includes("happy")) {
+        stability = 0.3;
+        similarity_boost = 0.85;
+      } else if (lowerScript.includes("angry")) {
+        stability = 0.2;
+        similarity_boost = 0.6;
+      } else if (lowerScript.includes("sad")) {
+        stability = 0.7;
+        similarity_boost = 0.4;
+      }
 
-        const sampleBlockSize = 1152;
-        for (let i = 0; i < samples.length; i += sampleBlockSize) {
-          const sampleChunk = samples.subarray(i, i + sampleBlockSize);
-          const mp3buf = mp3encoder.encodeBuffer(sampleChunk);
-          if (mp3buf.length > 0) mp3Data.push(mp3buf);
-        }
+      try {
+        const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "xi-api-key": apiKey
+          },
+          body: JSON.stringify({
+            text: script,
+            model_id: "eleven_multilingual_v1",
+            voice_settings: {
+              stability: stability,
+              similarity_boost: similarity_boost
+            }
+          })
+        });
 
-        const mp3buf = mp3encoder.flush();
-        if (mp3buf.length > 0) mp3Data.push(mp3buf);
+        if (!response.ok) throw new Error("Audio generation failed!");
 
-        const mp3Blob = new Blob(mp3Data, { type: 'audio/mp3' });
-        const url = URL.createObjectURL(mp3Blob);
-        const a = document.createElement('a');
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
         a.href = url;
-        a.download = "speech_output.mp3";
+        a.download = "script_audio.mp3";
         a.click();
-      };
-
-      const source = audioCtx.createMediaStreamSource(dest);
-      source.connect(audioCtx.destination);
-      mediaRecorder.start();
-
-      utter.onend = () => {
-        mediaRecorder.stop();
-      };
-
-      synth.speak(utter);
-    };
-
-    // Load voices
-    speechSynthesis.onvoiceschanged = () => {};
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    }
   </script>
 </body>
 </html>
