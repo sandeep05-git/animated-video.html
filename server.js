@@ -1,5 +1,7 @@
 require('dotenv').config();
+
 console.log("API Key Loaded:", process.env.ELEVENLABS_API_KEY ? "Yes" : "No");
+
 const express = require('express');
 const fetch = require('node-fetch');
 const app = express();
@@ -10,7 +12,7 @@ const PORT = 3000;
 const API_KEY = process.env.ELEVENLABS_API_KEY;
 
 const voiceByLanguage = {
-  en: "21m00Tcm4TlvDq8ikWAM",  // You can customize voice IDs here
+  en: "21m00Tcm4TlvDq8ikWAM",
   hi: "21m00Tcm4TlvDq8ikWAM",
   ta: "21m00Tcm4TlvDq8ikWAM",
   te: "21m00Tcm4TlvDq8ikWAM",
