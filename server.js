@@ -1,4 +1,5 @@
 require('dotenv').config();
+console.log('Loaded API Key:', process.env.ELEVENLABS_API_KEY ? 'Yes' : 'No');
 const express = require('express');
 const fetch = require('node-fetch');
 const app = express();
