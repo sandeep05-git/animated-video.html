@@ -1,13 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Secure Script to MP3</title>
+  <title>Script Audio Preview & Download</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; }
+    textarea { width: 100%; font-size: 1rem; }
+    button { font-size: 1rem; margin-right: 10px; padding: 8px 15px; cursor: pointer; }
+    button:disabled { background-color: #ccc; cursor: not-allowed; }
+  </style>
 </head>
 <body>
-  <h2>🎤 Enter Script</h2>
+  <h2>🎤 Enter Your Script</h2>
 
-  <textarea id="script" rows="5" cols="60" placeholder="Enter your script here...">Hello boss, I am very happy to work with you!</textarea><br><br>
+  <textarea id="script" rows="6" placeholder="Type your script here...">Hello boss, please listen first before downloading.</textarea><br><br>
 
   <label for="language">🌐 Select Language:</label>
   <select id="language">
@@ -18,14 +24,28 @@
     <option value="mr">Marathi</option>
   </select><br><br>
 
-  <button onclick="generateAudio()">▶️ Generate & Download MP3</button>
+  <button id="generateBtn">▶️ Generate & Listen</button>
+  <button id="downloadBtn" disabled>⬇️ Download MP3</button>
 
   <script>
-    async function generateAudio() {
-      const script = document.getElementById("script").value.trim();
-      const language = document.getElementById("language").value;
+    let audioURL = null;
+    let audioPlayer = null;
 
-      if (!script) return alert("Please enter a script.");
+    const generateBtn = document.getElementById('generateBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    generateBtn.onclick = async () => {
+      const script = document.getElementById('script').value.trim();
+      const language = document.getElementById('language').value;
+
+      if (!script) {
+        alert("Please enter a script.");
+        return;
+      }
+
+      generateBtn.disabled = true;
+      generateBtn.textContent = '⏳ Generating...';
+      downloadBtn.disabled = true;
 
       try {
         const response = await fetch('http://localhost:3000/generate-audio', {
@@ -41,16 +61,38 @@
         }
 
         const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "script_audio.mp3";
-        a.click();
 
-      } catch (err) {
-        alert("Error: " + err.message);
+        if (audioURL) URL.revokeObjectURL(audioURL);
+        audioURL = URL.createObjectURL(blob);
+
+        // Stop previous audio if playing
+        if (audioPlayer) {
+          audioPlayer.pause();
+          audioPlayer = null;
+        }
+
+        // Create new audio and play
+        audioPlayer = new Audio(audioURL);
+        audioPlayer.play();
+
+        // Enable download button now
+        downloadBtn.disabled = false;
+
+      } catch (error) {
+        alert("Error: " + error.message);
+      } finally {
+        generateBtn.disabled = false;
+        generateBtn.textContent = '▶️ Generate & Listen';
       }
-    }
+    };
+
+    downloadBtn.onclick = () => {
+      if (!audioURL) return;
+      const a = document.createElement('a');
+      a.href = audioURL;
+      a.download = 'script_audio.mp3';
+      a.click();
+    };
   </script>
 </body>
 </html>
