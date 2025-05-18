@@ -55,19 +55,17 @@
         });
 
         if (!response.ok) {
-          // Try to parse error JSON, but be safe if it fails
-          let err;
-          try {
-            err = await response.json();
-          } catch (_) {
-            err = null;
-          }
-          const message = err && err.error ? err.error : `Status ${response.status}: ${response.statusText}`;
-          alert("Error: " + message);
-          return;
-        }
-
-        const blob = await response.blob();
+  let errorText = '';
+  try {
+    const errJson = await response.json();
+    errorText = errJson.error || JSON.stringify(errJson);
+  } catch {
+    errorText = await response.text();
+  }
+  alert("Error from server: " + (errorText || `Status ${response.status}: ${response.statusText}`));
+  return;
+}
+const blob = await response.blob();
 
         if (audioURL) URL.revokeObjectURL(audioURL);
         audioURL = URL.createObjectURL(blob);
