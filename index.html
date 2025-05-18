@@ -1,44 +1,24 @@
 <!DOCTYPE html>
 <html>
-<head><title>ElevenLabs TTS Test</title></head>
+<head>
+  <title>Text to Speech with Download</title>
+</head>
 <body>
-  <textarea id="script" rows="5" cols="50">Hello from ElevenLabs TTS!</textarea><br>
-  <button onclick="generateAudio()">Generate Audio</button>
-  <div id="audioContainer"></div>
+  <textarea id="text" rows="6" cols="60" placeholder="Type your script here..."></textarea><br>
+  <button onclick="speak()">Play Audio</button>
+  <button onclick="downloadAudio()">Download Audio</button>
   <script>
-    async function generateAudio() {
-      const script = document.getElementById('script').value;
-      const res = await fetch('http://localhost:3000/generate-audio', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ script, language: 'en' })
-      });
+    function speak() {
+      const text = document.getElementById('text').value;
+      if (!text) return alert('Please enter text');
 
-      if (!res.ok) {
-        alert('Error generating audio');
-        return;
-      }
+      const utterance = new SpeechSynthesisUtterance(text);
+      speechSynthesis.speak(utterance);
+    }
 
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-
-      // Create audio element
-      const audio = new Audio(url);
-      audio.controls = true;
-
-      // Create download link
-      const downloadLink = document.createElement('a');
-      downloadLink.href = url;
-      downloadLink.download = 'output.mp3';
-      downloadLink.innerText = 'Download Audio';
-
-      const container = document.getElementById('audioContainer');
-      container.innerHTML = ''; // clear previous
-      container.appendChild(audio);
-      container.appendChild(document.createElement('br'));
-      container.appendChild(downloadLink);
-
-      audio.play();
+    function downloadAudio() {
+      alert("Downloading speech audio from Web Speech API isn't supported directly in browsers.");
+      // For real audio files, you need server-side TTS or WebAssembly TTS libraries.
     }
   </script>
 </body>
