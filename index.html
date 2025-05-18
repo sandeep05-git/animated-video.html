@@ -55,16 +55,14 @@
       });
 
       if (!response.ok) {
-        let err = null;
+        let errMessage = `Status ${response.status}: ${response.statusText}`;
         try {
-          err = await response.json();
+          const err = await response.json();
+          if (err && err.error) errMessage = err.error;
         } catch {
-          // JSON parse failed, err remains null
+          // Non-JSON response, keep default message
         }
-        const message = err && err.error ? err.error : `Status ${response.status}: ${response.statusText}`;
-        alert("Error: " + message);
-        generateBtn.disabled = false;
-        generateBtn.textContent = '▶️ Generate & Listen';
+        alert("Error: " + errMessage);
         return;
       }
 
