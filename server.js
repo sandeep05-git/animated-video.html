@@ -1,16 +1,11 @@
 require('dotenv').config();
-
 console.log("API Key Loaded:", process.env.ELEVENLABS_API_KEY ? "Yes" : "No");
-
 const express = require('express');
 const fetch = require('node-fetch');
 const app = express();
-
 app.use(express.json());
-
 const PORT = 3000;
 const API_KEY = process.env.ELEVENLABS_API_KEY;
-
 const voiceByLanguage = {
   en: "21m00Tcm4TlvDq8ikWAM",
   hi: "21m00Tcm4TlvDq8ikWAM",
@@ -42,7 +37,6 @@ app.post('/generate-audio', async (req, res) => {
         }
       })
     });
-
     if (!response.ok) {
   const errorBody = await response.json();
   console.error('ElevenLabs API error:', errorBody);
