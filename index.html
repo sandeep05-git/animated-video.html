@@ -55,8 +55,9 @@
         });
 
         if (!response.ok) {
-          const err = await response.json();
-          alert("Error: " + (err.error || "Audio generation failed!"));
+          const err = await response.json().catch(() => null);
+          const message = err && err.error ? err.error : `Status ${response.status}: ${response.statusText}`;
+          alert("Error: " + message);
           return;
         }
 
@@ -65,17 +66,14 @@
         if (audioURL) URL.revokeObjectURL(audioURL);
         audioURL = URL.createObjectURL(blob);
 
-        // Stop previous audio if playing
         if (audioPlayer) {
           audioPlayer.pause();
           audioPlayer = null;
         }
 
-        // Create new audio and play
         audioPlayer = new Audio(audioURL);
         audioPlayer.play();
 
-        // Enable download button now
         downloadBtn.disabled = false;
 
       } catch (error) {
