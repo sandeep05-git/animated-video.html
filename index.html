@@ -1,283 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Online Seller Support</title>
-<style>
-  /* Reset */
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    background: #f5f7fa;
-    color: #333;
-    line-height: 1.5;
-  }
-  header {
-    background: #007bff;
-    color: white;
-    padding: 1.25rem;
-    text-align: center;
-    font-size: 1.8rem;
-    font-weight: 700;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  nav {
-    background: #0056b3;
-    display: flex;
-    justify-content: space-around;
-    padding: 0.5rem 0;
-  }
-  nav a {
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
-    padding: 0.5rem 1rem;
-    transition: background 0.3s ease;
-    border-radius: 4px;
-  }
-  nav a:hover,
-  nav a.active {
-    background: #003d80;
-  }
-
-  main {
-    max-width: 900px;
-    margin: 1.5rem auto;
-    padding: 0 1rem;
-  }
-  section {
-    background: white;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.1);
-  }
-  h2 {
-    margin-bottom: 1rem;
-    color: #007bff;
-    border-bottom: 3px solid #007bff;
-    padding-bottom: 0.3rem;
-  }
-
-  /* Support Topics List */
-  .topics-list {
-    list-style: none;
-    padding-left: 0;
-  }
-  .topics-list li {
-    padding: 0.7rem 0;
-    border-bottom: 1px solid #ddd;
-  }
-  .topics-list li:last-child {
-    border-bottom: none;
-  }
-  .topics-list li a {
-    text-decoration: none;
-    color: #007bff;
-    font-weight: 600;
-    display: block;
-    transition: color 0.3s ease;
-  }
-  .topics-list li a:hover {
-    color: #0056b3;
-  }
-
-  /* FAQ Section */
-  .faq-item {
-    margin-bottom: 1rem;
-  }
-  .faq-question {
-    font-weight: 700;
-    cursor: pointer;
-    position: relative;
-    padding-right: 20px;
-  }
-  .faq-question::after {
-    content: '+';
-    position: absolute;
-    right: 0;
-    font-size: 1.3rem;
-    color: #007bff;
-    transition: transform 0.3s ease;
-  }
-  .faq-question.active::after {
-    content: '-';
-    transform: rotate(180deg);
-  }
-  .faq-answer {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.35s ease;
-    padding-left: 1rem;
-    color: #555;
-  }
-  .faq-answer.open {
-    max-height: 300px; /* enough height for content */
-    margin-top: 0.3rem;
-  }
-
-  /* Contact form */
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-  label {
-    margin-bottom: 0.3rem;
-    font-weight: 600;
-  }
-  input, textarea {
-    padding: 0.6rem;
-    margin-bottom: 1rem;
-    border: 1.5px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-    resize: vertical;
-  }
-  input:focus, textarea:focus {
-    outline: none;
-    border-color: #007bff;
-  }
-  button {
-    background: #007bff;
-    color: white;
-    padding: 0.7rem;
-    font-size: 1.1rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  button:hover {
-    background: #0056b3;
-  }
-
-  /* Responsive */
-  @media (max-width: 600px) {
-    nav {
-      flex-direction: column;
-      align-items: center;
-    }
-    nav a {
-      padding: 0.5rem;
-      width: 100%;
-      text-align: center;
-      border-radius: 0;
-    }
-    main {
-      margin: 1rem;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Online Seller Store</title>
+  <style>
+    /* Reset & basics */
+    * {
+      box-sizing: border-box;
+      margin: 0;
       padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background: #f9f9f9;
+      color: #333;
+      line-height: 1.6;
     }
     header {
-      font-size: 1.5rem;
-      padding: 1rem;
+      background: #007bff;
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: bold;
     }
-  }
-</style>
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    h2.section-title {
+      margin-bottom: 1rem;
+      border-bottom: 3px solid #007bff;
+      display: inline-block;
+      padding-bottom: 0.2rem;
+    }
+    /* Product grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
+      gap: 1.5rem;
+    }
+    /* Product card */
+    .product-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: box-shadow 0.3s ease;
+    }
+    .product-card:hover {
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    .product-image {
+      width: 100%;
+      height: 180px;
+      object-fit: contain;
+      margin-bottom: 1rem;
+    }
+    .product-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      flex-grow: 1;
+    }
+    .product-price {
+      font-size: 1.25rem;
+      color: #28a745;
+      margin-bottom: 1rem;
+    }
+    .btn-add-cart {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .btn-add-cart:hover {
+      background: #0056b3;
+    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      header {
+        font-size: 1.4rem;
+      }
+      .product-image {
+        height: 140px;
+      }
+    }
+  </style>
 </head>
 <body>
 
 <header>
-  Online Seller Support
+  Online Seller Store
 </header>
 
-<nav>
-  <a href="#home" class="active">Home</a>
-  <a href="#topics">Support Topics</a>
-  <a href="#faq">FAQs</a>
-  <a href="#contact">Contact</a>
-</nav>
-
 <main>
-  <section id="home">
-    <h2>Welcome to Online Seller Support</h2>
-    <p>
-      Whether you're new to online selling or a seasoned pro, we are here to help! Find useful guides, answers to common questions, and get in touch with our support team.
-    </p>
-  </section>
+  <section>
+    <h2 class="section-title">Featured Products</h2>
+    <div class="product-grid">
+      <div class="product-card">
+        <img src="https://via.placeholder.com/250x180?text=Product+1" alt="Product 1" class="product-image" />
+        <div class="product-title">Wireless Headphones</div>
+        <div class="product-price">$59.99</div>
+        <button class="btn-add-cart">Add to Cart</button>
+      </div>
 
-  <section id="topics">
-    <h2>Support Topics</h2>
-    <ul class="topics-list">
-      <li><a href="#">How to create a product listing</a></li>
-      <li><a href="#">Managing your orders</a></li>
-      <li><a href="#">Shipping and delivery options</a></li>
-      <li><a href="#">Payment and refunds</a></li>
-      <li><a href="#">Account settings and security</a></li>
-    </ul>
-  </section>
+      <div class="product-card">
+        <img src="https://via.placeholder.com/250x180?text=Product+2" alt="Product 2" class="product-image" />
+        <div class="product-title">Smartwatch Series 5</div>
+        <div class="product-price">$199.99</div>
+        <button class="btn-add-cart">Add to Cart</button>
+      </div>
 
-  <section id="faq">
-    <h2>Frequently Asked Questions</h2>
-    
-    <div class="faq-item">
-      <div class="faq-question">How do I reset my account password?</div>
-      <div class="faq-answer">
-        Click on 'Forgot Password' at login, enter your email, and follow the instructions to reset your password.
+      <div class="product-card">
+        <img src="https://via.placeholder.com/250x180?text=Product+3" alt="Product 3" class="product-image" />
+        <div class="product-title">Bluetooth Speaker</div>
+        <div class="product-price">$34.99</div>
+        <button class="btn-add-cart">Add to Cart</button>
+      </div>
+
+      <div class="product-card">
+        <img src="https://via.placeholder.com/250x180?text=Product+4" alt="Product 4" class="product-image" />
+        <div class="product-title">Fitness Tracker Band</div>
+        <div class="product-price">$49.99</div>
+        <button class="btn-add-cart">Add to Cart</button>
       </div>
     </div>
-
-    <div class="faq-item">
-      <div class="faq-question">What are the payment methods supported?</div>
-      <div class="faq-answer">
-        We accept all major credit cards, PayPal, and Stripe payments.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">How long does shipping take?</div>
-      <div class="faq-answer">
-        Shipping times vary by location, typically 3-7 business days.
-      </div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <h2>Contact Support</h2>
-    <form>
-      <label for="name">Full Name</label>
-      <input type="text" id="name" name="name" placeholder="Your full name" required />
-      
-      <label for="email">Email Address</label>
-      <input type="email" id="email" name="email" placeholder="your.email@example.com" required />
-      
-      <label for="message">Message</label>
-      <textarea id="message" name="message" rows="5" placeholder="Describe your issue or question" required></textarea>
-      
-      <button type="submit">Send Message</button>
-    </form>
   </section>
 </main>
-
-<script>
-  // FAQ toggle
-  const questions = document.querySelectorAll('.faq-question');
-  questions.forEach(q => {
-    q.addEventListener('click', () => {
-      q.classList.toggle('active');
-      const answer = q.nextElementSibling;
-      if (answer.classList.contains('open')) {
-        answer.classList.remove('open');
-      } else {
-        answer.classList.add('open');
-      }
-    });
-  });
-
-  // Nav link active switching (optional)
-  const navLinks = document.querySelectorAll('nav a');
-  navLinks.forEach(link => {
-    link.addEventListener('click', e => {
-      navLinks.forEach(l => l.classList.remove('active'));
-      e.target.classList.add('active');
-    });
-  });
-</script>
 
 </body>
 </html>
