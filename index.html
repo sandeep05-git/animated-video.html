@@ -139,9 +139,98 @@
       <button type="submit">Send</button>
     </form>
   </section>
+<section id="contact">
+  <h2>Contact Us</h2>
+  <form id="contact-form" action="https://formspree.io/f/xqaqpyjv" method="POST">
+    <label>
+      Your Name:
+      <input type="text" name="name" required placeholder="Enter your name" />
+    </label>
+    <label>
+      Mobile Number:
+      <input type="tel" name="mobile" required placeholder="Enter your mobile number" />
+    </label>
+    <label>
+      Your Email:
+      <input type="email" name="email" required placeholder="Enter your email" />
+    </label>
+    <label>
+      Your Message:
+      <textarea name="message" required placeholder="Enter your message"></textarea>
+    </label>
+    <button type="submit">Send</button>
+  </form>
+  <div id="thank-you-message" style="display:none;">Thanks for contacting us!</div>
+</section>
 
-  <footer>
-    <p>&copy; 2025 Seller Support. All rights reserved.</p>
-  </footer>
+<footer>
+  <p>&copy; 2025 Ecoquicksupp. All rights reserved.</p>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const elements = document.querySelectorAll('header, section, footer');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    elements.forEach(el => observer.observe(el));
+  });
+
+  const menuIcon = document.getElementById('menu-icon');
+  const menu = document.getElementById('menu');
+
+  menuIcon.addEventListener('click', () => {
+    menuIcon.classList.toggle('active');
+    menu.classList.toggle('active');
+  });
+
+  menuIcon.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      menuIcon.click();
+    }
+  });
+
+  // Formspree thank you message
+  const form = document.getElementById('contact-form');
+  const thankYouMessage = document.getElementById('thank-you-message');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    fetch(form.action, {
+      method: 'POST',
+      body: formData,
+      headers: { 'Accept': 'application/json' }
+    }).then(response => {
+      if (response.ok) {
+        form.style.display = 'none';
+        thankYouMessage.style.display = 'block';
+      } else {
+        alert('Oops! There was a problem submitting your form.');
+      }
+    }).catch(() => {
+      alert('Oops! There was a problem submitting your form.');
+    });
+  });
+</script>
+  
+  <!-- Tawk.to Script -->
+  <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+      s1.async=true;
+      s1.src='https://embed.tawk.to/6817654e138f991917bc62b1/1iqdm7f77';
+      s1.charset='UTF-8';
+      s1.setAttribute('crossorigin','*');
+      s0.parentNode.insertBefore(s1,s0);
+    })();
+  </script>
+  
 </body>
 </html>
