@@ -1,165 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Talking Characters Demo - Indian English + Lips Animation</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-  }
-  .character {
-    position: relative;
-    width: 200px;
-    height: 300px;
-    background-image: url('https://raw.githubusercontent.com/sandeep05-git/animated-video.html/main/ChatGPT%20Image%20May%2024%2C%202025%2C%2012_50_11%20PM.png');
-    background-size: 400px 300px;
-    background-repeat: no-repeat;
-    display: inline-block;
-    margin-right: 40px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-  }
-
-  #male {
-    background-position: 0 0;
-  }
-
-  #female {
-    background-position: -200px 0;
-  }
-
-  .mouth {
-    position: absolute;
-    bottom: 50px;
-    left: 50px;
-    width: 100px;
-    height: 50px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-image: url('https://i.imgur.com/0T4Xq4U.png'); /* mouth closed */
-    transition: background-image 0.15s ease-in-out;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Talking Character Video Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    canvas {
+      border: 2px solid #333;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+    }
+  </style>
 </head>
 <body>
+  <h2>Talking Character to Video</h2>
+  <textarea id="scriptBox" rows="4" cols="60">Hello, this is a demo of the seller support explanation video.</textarea><br>
+  <button onclick="startRecording()">Start Recording</button>
+  <button onclick="stopRecording()">Stop & Download</button>
 
-<h2>Talking Characters Demo (Indian English Voice + Lips Animation)</h2>
+  <br>
+  <canvas id="characterCanvas" width="400" height="300"></canvas>
 
-<textarea id="scriptBox" rows="8" cols="60" placeholder="Type your script here...">
-Hello,  
-I have been following all rules and maintaining my account well. But my account health metrics are low, and I see a risk of deactivation. Also, one of my listings has been blocked.  
-Can you please explain why this is happening and how I can resolve it?  
-I want to keep my account in good standing.  
-Thanks for your help!
-</textarea><br><br>
+  <script>
+    const canvas = document.getElementById('characterCanvas');
+    const ctx = canvas.getContext('2d');
+    let mouthOpen = false;
+    let interval;
+    let mediaRecorder;
+    let recordedChunks = [];
 
-<button onclick="startTalking('male', 'seller')">Seller Talk (Male)</button>
-<button onclick="startTalking('female', 'seller')">Seller Talk (Female)</button><br><br>
+    const img = new Image();
+    img.src = 'https://raw.githubusercontent.com/sandeep05-git/animated-video.html/main/ChatGPT%20Image%20May%2024%2C%202025%2C%2012_50_11%20PM.png';
 
-<button onclick="startTalking('male', 'support')">Support Talk (Male)</button>
-<button onclick="startTalking('female', 'support')">Support Talk (Female)</button><br><br>
-
-<div>
-  <div id="male" class="character">
-    <div class="mouth" id="male-mouth"></div>
-  </div>
-  <div id="female" class="character">
-    <div class="mouth" id="female-mouth"></div>
-  </div>
-</div>
-
-<script>
-  const mouthFrames = {
-    male: [
-      'https://i.imgur.com/0T4Xq4U.png',  // mouth closed
-      'https://i.imgur.com/IyW9k2D.png'   // mouth open
-    ],
-    female: [
-      'https://i.imgur.com/0T4Xq4U.png', 
-      'https://i.imgur.com/IyW9k2D.png'
-    ]
-  };
-
-  // Scripts for seller and support
-  const scripts = {
-    seller: `Hello,  
-I have been following all rules and maintaining my account well. But my account health metrics are low, and I see a risk of deactivation. Also, one of my listings has been blocked.  
-Can you please explain why this is happening and how I can resolve it?  
-I want to keep my account in good standing.  
-Thanks for your help!`,
-
-    support: `I understand your account is at risk even after maintenance, and the listing has been blocked.  
-First of all, I apologize for the inconvenience you have faced regarding these issues. Definitely, I can help you.  
-Regarding the risk of account deactivation, kindly make sure you are placing orders on time and submitting responses for received violations correctly.  
-All account health is impacted due to received policy violations and late dispatch rate.  
-For unblocking the listing, kindly update the product dimensions as per the policy, according to which the breach occurred.`
-  };
-
-  let talkingInterval;
-
-  function animateMouth(character) {
-    const mouth = document.getElementById(character + '-mouth');
-    let index = 0;
-    talkingInterval = setInterval(() => {
-      mouth.style.backgroundImage = `url('${mouthFrames[character][index]}')`;
-      index = (index + 1) % mouthFrames[character].length;
-    }, 200);
-  }
-
-  function stopMouthAnimation(character) {
-    clearInterval(talkingInterval);
-    const mouth = document.getElementById(character + '-mouth');
-    mouth.style.backgroundImage = `url('${mouthFrames[character][0]}')`;
-  }
-
-  // Try to find an Indian English voice from the system voices
-  function getIndianEnglishVoice() {
-    const voices = speechSynthesis.getVoices();
-    // Look for voices with 'en-IN' lang or containing 'Indian' in name
-    return voices.find(voice => voice.lang === 'en-IN' || voice.name.toLowerCase().includes('indian')) || null;
-  }
-
-  function startTalking(character, role) {
-    let scriptText = scripts[role];
-    if (!scriptText) {
-      scriptText = document.getElementById('scriptBox').value.trim();
-      if (!scriptText) {
-        alert('Please enter a script!');
-        return;
+    function drawCharacter() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, 400, 300);
+      // Draw mouth as animated oval
+      ctx.fillStyle = "red";
+      if (mouthOpen) {
+        ctx.beginPath();
+        ctx.ellipse(200, 260, 30, 15, 0, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillRect(170, 255, 60, 5);
       }
     }
 
-    animateMouth(character);
+    function startMouthAnimation() {
+      interval = setInterval(() => {
+        mouthOpen = !mouthOpen;
+        drawCharacter();
+      }, 200);
+    }
 
-    const utterance = new SpeechSynthesisUtterance(scriptText);
+    function stopMouthAnimation() {
+      clearInterval(interval);
+      mouthOpen = false;
+      drawCharacter();
+    }
 
-    // Wait for voices to be loaded, then set Indian voice if available
-    function speakWithVoice() {
-      const indianVoice = getIndianEnglishVoice();
-      if (indianVoice) {
-        utterance.voice = indianVoice;
-        utterance.lang = indianVoice.lang;
-      } else {
-        utterance.lang = 'en-US'; // fallback
-      }
+    async function startRecording() {
+      const stream = canvas.captureStream(30);
+      mediaRecorder = new MediaRecorder(stream);
+      recordedChunks = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) recordedChunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'talking-video.webm';
+        a.click();
+      };
+
+      mediaRecorder.start();
+
+      const script = document.getElementById('scriptBox').value;
+      startMouthAnimation();
+      const utterance = new SpeechSynthesisUtterance(script);
+      utterance.lang = 'en-IN'; // Indian English
+
+      utterance.onend = () => {
+        stopMouthAnimation();
+        mediaRecorder.stop();
+      };
+
       speechSynthesis.speak(utterance);
     }
 
-    if (speechSynthesis.getVoices().length === 0) {
-      // Voices not loaded yet, wait for them
-      speechSynthesis.onvoiceschanged = () => {
-        speakWithVoice();
-      };
-    } else {
-      speakWithVoice();
+    function stopRecording() {
+      stopMouthAnimation();
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+      }
     }
 
-    utterance.onend = () => {
-      stopMouthAnimation(character);
-    };
-  }
-</script>
-
+    img.onload = drawCharacter;
+  </script>
 </body>
 </html>
