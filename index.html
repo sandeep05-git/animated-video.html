@@ -30,7 +30,7 @@
 
   <h2>Seller Support Animated Demo</h2>
 
-  <video id="video" src="https://raw.githubusercontent.com/sandeep05-git/animated-video.html/main/video1.mp4" preload="auto"></video><br>
+  <video id="video" src="https://raw.githubusercontent.com/sandeep05-git/animated-video.html/main/video3.mp4" preload="auto"></video><br>
 
   <label for="langSelect">Choose Language: </label>
   <select id="langSelect">
@@ -49,14 +49,13 @@
 
     const scripts = {
       en: [
-        "I have maintained everything, still account health metrics are getting low and it's showing risk of deactivation. My listing is also blocked. Why?",
-        "I understand your account is at risk even after maintaining it. First of all, I apologize for the inconvenience. For the account risk, please ensure you’re fulfilling orders on time. Also, violations must be responded to promptly. For the blocked listing, kindly update the product dimensions as per policy to resolve the issue."
+        "Why is my listing showing currently unavailable, even after all the details are updated?",
+        "I understand your listing is currently showing as unavailable because the product dimensions are not updated according to the platform's accepted limits as per policy. Additionally, the product has been identified as a hazardous material (Hazmat), which requires you to submit a Safety Data Sheet (SDS) for approval."
       ],
       hi: [
-        "मैंने सब कुछ सही से किया है, फिर भी अकाउंट हेल्थ खराब दिखा रहा है और डीएक्टिवेशन का खतरा आ रहा है। मेरी लिस्टिंग भी ब्लॉक हो गई है, ऐसा क्यों?",
-        "मैं समझ सकता हूँ कि आपका अकाउंट रिस्क पर है, पहले मैं असुविधा के लिए क्षमा चाहता हूँ। अकाउंट रिस्क के लिए कृपया समय पर ऑर्डर डिलीवर करें और पॉलिसी वायलेशन पर जवाब दें। लिस्टिंग अनब्लॉक करने के लिए प्रोडक्ट डाइमेंशन को पॉलिसी के अनुसार अपडेट करें।"
-      ]
-    };
+        "मेरी लिस्टिंग सभी विवरण अपडेट करने के बाद भी वर्तमान में अनुपलब्ध क्यों दिख रही है?",
+              ]
+    };"मैं समझता हूँ कि आपकी लिस्टिंग फिलहाल 'Currently Unavailable' दिख रही है क्योंकि प्रोडक्ट के आयाम (dimensions) प्लेटफॉर्म की नीति के अनुसार निर्धारित सीमा में अपडेट नहीं किए गए हैं। साथ ही, इस प्रोडक्ट को खतरनाक सामग्री (Hazmat) के रूप में पहचाना गया है, जिसके लिए आपको एक सेफ्टी डेटा शीट (SDS) जमा करनी होगी।"
 
     function playScript() {
       const lang = langSelect.value;
