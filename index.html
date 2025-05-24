@@ -2,228 +2,117 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Talking Characters with Combined Image and Realistic Lips</title>
+<title>Simple Talking Characters with GIF Mouth</title>
 <style>
   body {
     font-family: Arial, sans-serif;
-    text-align: center;
-    background: #eef2f7;
     padding: 20px;
   }
-
-  #controls {
-    margin-bottom: 20px;
-  }
-
-  select, textarea, button {
-    font-size: 16px;
-    padding: 8px 12px;
-    margin: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-
-  textarea {
-    width: 400px;
-    height: 100px;
-    resize: vertical;
-  }
-
-  .characters {
-    display: flex;
-    justify-content: center;
-    gap: 60px;
-    margin-top: 20px;
-  }
-
   .character {
     position: relative;
-    width: 200px;
-    height: 300px;
+    width: 200px;  /* width of one character */
+    height: 300px; /* height of image */
     background-image: url('https://raw.githubusercontent.com/sandeep05-git/animated-video.html/main/ChatGPT%20Image%20May%2024%2C%202025%2C%2012_50_11%20PM.png');
+    background-size: 400px 300px; /* full size of combined image */
     background-repeat: no-repeat;
-    background-size: 400px 300px; /* total combined image size */
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgb(0 0 0 / 0.15);
+    display: inline-block;
+    margin-right: 40px;
+    /* subtle shake animation */
+    animation-name: none;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
   }
 
   #male {
-    background-position: 0 0; /* left half */
+    background-position: 0 0; /* show left half */
   }
 
   #female {
-    background-position: -200px 0; /* right half */
+    background-position: -200px 0; /* show right half */
   }
 
-  /* Mouth as a colored oval over lips */
-  .mouth {
+  .mouth-gif {
     position: absolute;
-    bottom: 85px;
-    width: 70px;
-    height: 20px;
-    background-color: #b33a3a;
-    border-radius: 35px / 20px;
-    left: 65px;
-    transform-origin: center;
-    filter: drop-shadow(0 0 1px rgba(0,0,0,0.4));
-  }
-
-  /* Adjust female mouth position slightly */
-  #female .mouth {
-    left: 60px;
-    bottom: 83px;
+    width: 80px;
+    height: 40px;
+    bottom: 60px;  /* adjust to lip position */
+    left: 60px;    /* adjust to center mouth */
+    display: none; /* hidden initially */
   }
 
   /* Shake animation */
-  .shake {
-    animation: shakeAnim 0.4s ease-in-out infinite alternate;
-  }
-  @keyframes shakeAnim {
-    0% { transform: translate(0, 0) rotate(0deg);}
-    25% { transform: translate(2px, -1px) rotate(-1deg);}
-    50% { transform: translate(1px, 1px) rotate(1deg);}
-    75% { transform: translate(-1px, 0) rotate(0deg);}
-    100% { transform: translate(0, 0) rotate(0deg);}
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(2px); }
+    50% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
   }
 </style>
 </head>
 <body>
 
-<h2>Talking Characters Demo (Combined Image)</h2>
+<h2>Simple Talking Characters with GIF Mouth</h2>
 
-<div id="controls">
-  <select id="language">
-    <option value="en-IN">English</option>
-    <option value="hi-IN">Hindi</option>
-  </select><br>
+<textarea id="scriptBox" rows="3" cols="60" placeholder="Type your script here...">Hello, this is the seller support tutorial!</textarea><br><br>
 
-  <textarea id="scriptBox" placeholder="Type your script here...">
-I have maintained everything but my account health metrics are low and my listing is blocked. Why?
-  </textarea><br>
+<button onclick="startTalking('male')">Male Talk</button>
+<button onclick="startTalking('female')">Female Talk</button>
+<button onclick="stopTalking()">Stop</button>
 
-  <button onclick="startTalking('male')">Male Talk</button>
-  <button onclick="startTalking('female')">Female Talk</button>
-  <button onclick="stopTalking()">Stop</button>
-</div>
-
-<div class="characters">
+<div>
   <div id="male" class="character">
-    <div class="mouth"></div>
+    <img src="https://i.imgur.com/5nP2R7c.gif" alt="mouth animation" class="mouth-gif" id="male-mouth">
   </div>
-
   <div id="female" class="character">
-    <div class="mouth"></div>
+    <img src="https://i.imgur.com/5nP2R7c.gif" alt="mouth animation" class="mouth-gif" id="female-mouth">
   </div>
 </div>
 
 <script>
-  const synth = window.speechSynthesis;
-  const languageSelect = document.getElementById('language');
-  const scriptBox = document.getElementById('scriptBox');
-  let mouthIntervals = {};
-  let currentCharacter = null;
-
-  // Mouth movement phases: scaleX & scaleY to simulate open/close mouth
-  const mouthPhases = [
-    {scaleX: 1, scaleY: 0.4},  // closed
-    {scaleX: 1.2, scaleY: 0.7}, // mid open
-    {scaleX: 1.4, scaleY: 1}   // fully open
-  ];
-
-  function animateMouth(character) {
-    const mouth = document.querySelector(`#${character} .mouth`);
-    let phaseIndex = 0;
-    mouthIntervals[character] = setInterval(() => {
-      const phase = mouthPhases[phaseIndex];
-      mouth.style.transform = `scaleX(${phase.scaleX}) scaleY(${phase.scaleY})`;
-      phaseIndex = (phaseIndex + 1) % mouthPhases.length;
-    }, 180);
-  }
-
-  function stopMouthAnimation(character) {
-    clearInterval(mouthIntervals[character]);
-    const mouth = document.querySelector(`#${character} .mouth`);
-    if (mouth) {
-      mouth.style.transform = 'scaleX(1) scaleY(0.4)';
-    }
-  }
-
-  function startShake(character) {
-    const el = document.getElementById(character);
-    if(el) el.classList.add('shake');
-  }
-
-  function stopShake(character) {
-    const el = document.getElementById(character);
-    if(el) el.classList.remove('shake');
-  }
-
-  // Predefined support response for the question
-  const supportResponse = {
-    male: "I understand your account is at risk even after maintenance and your listing is blocked. I apologize for the inconvenience you have faced. Regarding the risk of deactivation, please make sure you place orders on time and respond correctly to policy violations. Your account health is impacted due to violations and late dispatch rates. To unblock your listing, update product dimensions as per policy to avoid breaches.",
-    female: "मैं समझ सकती हूँ कि आपका खाता जोखिम में है, भले ही आपने सब कुछ ठीक रखा हो और आपकी लिस्टिंग ब्लॉक हो गई हो। मैं इस असुविधा के लिए क्षमा चाहता हूँ। खाता निष्क्रिय होने के जोखिम के लिए, कृपया सुनिश्चित करें कि आप समय पर ऑर्डर कर रहे हैं और नीति उल्लंघनों के जवाब सही ढंग से दे रहे हैं। आपके खाते का स्वास्थ्य उल्लंघनों और विलंबित डिस्पैच दर के कारण प्रभावित है। लिस्टिंग अनब्लॉक करने के लिए, कृपया उत्पाद के आयाम नीति के अनुसार अपडेट करें जिससे उल्लंघन समाप्त हो।"
-  };
+  let synth = window.speechSynthesis;
+  let utterance;
+  let talkingCharacter = null;
 
   function startTalking(character) {
-    if (synth.speaking) {
-      alert('Speech in progress, please stop first.');
+    const script = document.getElementById('scriptBox').value.trim();
+    if (!script) {
+      alert('Please enter a script!');
       return;
     }
-
-    currentCharacter = character;
-    let text = scriptBox.value.trim();
-
-    // If the user text is empty, use predefined scripts
-    if(!text){
-      text = (languageSelect.value === 'hi-IN' && character === 'female') 
-        ? supportResponse.female 
-        : supportResponse.male;
-      scriptBox.value = text; // show the default response
+    if (talkingCharacter) {
+      stopTalking();
     }
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = languageSelect.value;
+    talkingCharacter = character;
+    const mouthGif = document.getElementById(character + '-mouth');
+    const charDiv = document.getElementById(character);
 
-    // Try to pick a voice matching language
-    const voices = synth.getVoices();
-    const voice = voices.find(v => v.lang === utterance.lang) || voices[0];
-    if(voice) utterance.voice = voice;
+    // Show mouth GIF and start shake animation
+    mouthGif.style.display = 'block';
+    charDiv.style.animationName = 'shake';
 
-    utterance.onstart = () => {
-      animateMouth(character);
-      startShake(character);
-    };
-
+    utterance = new SpeechSynthesisUtterance(script);
+    utterance.lang = 'en-IN';  // Indian English tone
     utterance.onend = () => {
-      stopMouthAnimation(character);
-      stopShake(character);
+      stopTalking();
     };
-
-    utterance.onerror = () => {
-      stopMouthAnimation(character);
-      stopShake(character);
-      alert('Speech synthesis error');
-    };
-
     synth.speak(utterance);
   }
 
   function stopTalking() {
-    if (synth.speaking) {
-      synth.cancel();
-      if(currentCharacter){
-        stopMouthAnimation(currentCharacter);
-        stopShake(currentCharacter);
-        currentCharacter = null;
-      }
-    }
-  }
+    if (!talkingCharacter) return;
+    const mouthGif = document.getElementById(talkingCharacter + '-mouth');
+    const charDiv = document.getElementById(talkingCharacter);
 
-  // Load voices
-  if (speechSynthesis.onvoiceschanged !== undefined) {
-    speechSynthesis.onvoiceschanged = () => {
-      synth.getVoices();
-    };
+    // Hide mouth GIF and stop shake animation
+    mouthGif.style.display = 'none';
+    charDiv.style.animationName = 'none';
+
+    if (utterance) {
+      synth.cancel();
+    }
+    talkingCharacter = null;
   }
 </script>
 
