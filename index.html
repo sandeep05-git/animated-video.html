@@ -10,10 +10,10 @@
   }
   .character {
     position: relative;
-    width: 200px;  /* half of combined image width */
-    height: 300px; /* combined image height */
+    width: 200px;
+    height: 300px;
     background-image: url('https://raw.githubusercontent.com/sandeep05-git/animated-video.html/main/ChatGPT%20Image%20May%2024%2C%202025%2C%2012_50_11%20PM.png');
-    background-size: 400px 300px; /* full combined image size */
+    background-size: 400px 300px;
     background-repeat: no-repeat;
     display: inline-block;
     margin-right: 40px;
@@ -22,23 +22,22 @@
   }
 
   #male {
-    background-position: 0 0; /* show left half */
+    background-position: 0 0;
   }
 
   #female {
-    background-position: -200px 0; /* show right half */
+    background-position: -200px 0;
   }
 
-  /* Mouth overlay */
   .mouth {
     position: absolute;
-    bottom: 50px;  /* adjust mouth vertical position */
-    left: 50px;    /* adjust mouth horizontal position */
+    bottom: 50px;
+    left: 50px;
     width: 100px;
     height: 50px;
     background-size: contain;
     background-repeat: no-repeat;
-    background-image: url('https://i.imgur.com/0T4Xq4U.png'); /* mouth closed */
+    background-image: url('https://i.imgur.com/0T4Xq4U.png');
   }
 </style>
 </head>
@@ -46,10 +45,19 @@
 
 <h2>Talking Characters Demo</h2>
 
-<textarea id="scriptBox" rows="3" cols="60" placeholder="Type your script here...">Hello, this is the seller support tutorial!</textarea><br><br>
+<textarea id="scriptBox" rows="8" cols="60" placeholder="Type your script here...">
+Hello,  
+I have been following all rules and maintaining my account well. But my account health metrics are low, and I see a risk of deactivation. Also, one of my listings has been blocked.  
+Can you please explain why this is happening and how I can resolve it?  
+I want to keep my account in good standing.  
+Thanks for your help!
+</textarea><br><br>
 
-<button onclick="startTalking('male')">Male Talk</button>
-<button onclick="startTalking('female')">Female Talk</button>
+<button onclick="startTalking('male', 'seller')">Seller Talk (Male)</button>
+<button onclick="startTalking('female', 'seller')">Seller Talk (Female)</button><br><br>
+
+<button onclick="startTalking('male', 'support')">Support Talk (Male)</button>
+<button onclick="startTalking('female', 'support')">Support Talk (Female)</button><br><br>
 
 <div>
   <div id="male" class="character">
@@ -61,16 +69,30 @@
 </div>
 
 <script>
-  // Mouth images URLs (open and closed)
   const mouthFrames = {
     male: [
-      'https://i.imgur.com/0T4Xq4U.png', // mouth closed
-      'https://i.imgur.com/IyW9k2D.png'  // mouth open
+      'https://i.imgur.com/0T4Xq4U.png',
+      'https://i.imgur.com/IyW9k2D.png'
     ],
     female: [
-      'https://i.imgur.com/0T4Xq4U.png', // mouth closed
-      'https://i.imgur.com/IyW9k2D.png'  // mouth open
+      'https://i.imgur.com/0T4Xq4U.png',
+      'https://i.imgur.com/IyW9k2D.png'
     ]
+  };
+
+  // Scripts for seller and support
+  const scripts = {
+    seller: `Hello,  
+I have been following all rules and maintaining my account well. But my account health metrics are low, and I see a risk of deactivation. Also, one of my listings has been blocked.  
+Can you please explain why this is happening and how I can resolve it?  
+I want to keep my account in good standing.  
+Thanks for your help!`,
+
+    support: `I understand your account is at risk even after maintenance, and the listing has been blocked.  
+First of all, I apologize for the inconvenience you have faced regarding these issues. Definitely, I can help you.  
+Regarding the risk of account deactivation, kindly make sure you are placing orders on time and submitting responses for received violations correctly.  
+All account health is impacted due to received policy violations and late dispatch rate.  
+For unblocking the listing, kindly update the product dimensions as per the policy, according to which the breach occurred.`
   };
 
   let talkingInterval;
@@ -90,17 +112,20 @@
     mouth.style.backgroundImage = `url('${mouthFrames[character][0]}')`;
   }
 
-  function startTalking(character) {
-    const script = document.getElementById('scriptBox').value.trim();
-    if (!script) {
-      alert('Please enter a script!');
-      return;
+  function startTalking(character, role) {
+    let scriptText = scripts[role];
+    if (!scriptText) {
+      scriptText = document.getElementById('scriptBox').value.trim();
+      if (!scriptText) {
+        alert('Please enter a script!');
+        return;
+      }
     }
 
     animateMouth(character);
 
-    const utterance = new SpeechSynthesisUtterance(script);
-    utterance.lang = 'en-US'; // You can change this if needed
+    const utterance = new SpeechSynthesisUtterance(scriptText);
+    utterance.lang = 'en-US';
 
     utterance.onend = () => {
       stopMouthAnimation(character);
