@@ -1,120 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Simple Talking Characters with GIF Mouth</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-  }
-  .character {
-    position: relative;
-    width: 200px;  /* width of one character */
-    height: 300px; /* height of image */
-    background-image: url('https://raw.githubusercontent.com/sandeep05-git/animated-video.html/main/ChatGPT%20Image%20May%2024%2C%202025%2C%2012_50_11%20PM.png');
-    background-size: 400px 300px; /* full size of combined image */
-    background-repeat: no-repeat;
-    display: inline-block;
-    margin-right: 40px;
-    /* subtle shake animation */
-    animation-name: none;
-    animation-duration: 0.5s;
-    animation-iteration-count: infinite;
-    animation-timing-function: ease-in-out;
-  }
+  <meta charset="UTF-8" />
+  <title>Seller Support Conversation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      text-align: center;
+      background-color: #f0f0f0;
+    }
 
-  #male {
-    background-position: 0 0; /* show left half */
-  }
+    video {
+      width: 400px;
+      height: auto;
+      margin: 20px 0;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
 
-  #female {
-    background-position: -200px 0; /* show right half */
-  }
-
-  .mouth-gif {
-    position: absolute;
-    width: 80px;
-    height: 40px;
-    bottom: 60px;  /* adjust to lip position */
-    left: 60px;    /* adjust to center mouth */
-    display: none; /* hidden initially */
-  }
-
-  /* Shake animation */
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(2px); }
-    50% { transform: translateX(-2px); }
-    75% { transform: translateX(2px); }
-  }
-</style>
+    select, button {
+      font-size: 16px;
+      padding: 10px 15px;
+      margin: 10px;
+    }
+  </style>
 </head>
 <body>
 
-<h2>Simple Talking Characters with GIF Mouth</h2>
+  <h2>Seller Support Animated Demo</h2>
 
-<textarea id="scriptBox" rows="3" cols="60" placeholder="Type your script here...">Hello, this is the seller support tutorial!</textarea><br><br>
+  <video id="video" src="https://raw.githubusercontent.com/sandeep05-git/animated-video.html/main/video1.mp4" preload="auto"></video><br>
 
-<button onclick="startTalking('male')">Male Talk</button>
-<button onclick="startTalking('female')">Female Talk</button>
-<button onclick="stopTalking()">Stop</button>
+  <label for="langSelect">Choose Language: </label>
+  <select id="langSelect">
+    <option value="en">English</option>
+    <option value="hi">Hindi</option>
+  </select>
 
-<div>
-  <div id="male" class="character">
-    <img src="https://i.imgur.com/5nP2R7c.gif" alt="mouth animation" class="mouth-gif" id="male-mouth">
-  </div>
-  <div id="female" class="character">
-    <img src="https://i.imgur.com/5nP2R7c.gif" alt="mouth animation" class="mouth-gif" id="female-mouth">
-  </div>
-</div>
+  <br>
 
-<script>
-  let synth = window.speechSynthesis;
-  let utterance;
-  let talkingCharacter = null;
+  <button onclick="playScript()">▶ Play</button>
+  <button onclick="stopAll()">⏹ Stop</button>
 
-  function startTalking(character) {
-    const script = document.getElementById('scriptBox').value.trim();
-    if (!script) {
-      alert('Please enter a script!');
-      return;
-    }
-    if (talkingCharacter) {
-      stopTalking();
-    }
+  <script>
+    const video = document.getElementById("video");
+    const langSelect = document.getElementById("langSelect");
 
-    talkingCharacter = character;
-    const mouthGif = document.getElementById(character + '-mouth');
-    const charDiv = document.getElementById(character);
-
-    // Show mouth GIF and start shake animation
-    mouthGif.style.display = 'block';
-    charDiv.style.animationName = 'shake';
-
-    utterance = new SpeechSynthesisUtterance(script);
-    utterance.lang = 'en-IN';  // Indian English tone
-    utterance.onend = () => {
-      stopTalking();
+    const scripts = {
+      en: [
+        "I have maintained everything, still account health metrics are getting low and it's showing risk of deactivation. My listing is also blocked. Why?",
+        "I understand your account is at risk even after maintaining it. First of all, I apologize for the inconvenience. For the account risk, please ensure you’re fulfilling orders on time. Also, violations must be responded to promptly. For the blocked listing, kindly update the product dimensions as per policy to resolve the issue."
+      ],
+      hi: [
+        "मैंने सब कुछ सही से किया है, फिर भी अकाउंट हेल्थ खराब दिखा रहा है और डीएक्टिवेशन का खतरा आ रहा है। मेरी लिस्टिंग भी ब्लॉक हो गई है, ऐसा क्यों?",
+        "मैं समझ सकता हूँ कि आपका अकाउंट रिस्क पर है, पहले मैं असुविधा के लिए क्षमा चाहता हूँ। अकाउंट रिस्क के लिए कृपया समय पर ऑर्डर डिलीवर करें और पॉलिसी वायलेशन पर जवाब दें। लिस्टिंग अनब्लॉक करने के लिए प्रोडक्ट डाइमेंशन को पॉलिसी के अनुसार अपडेट करें।"
+      ]
     };
-    synth.speak(utterance);
-  }
 
-  function stopTalking() {
-    if (!talkingCharacter) return;
-    const mouthGif = document.getElementById(talkingCharacter + '-mouth');
-    const charDiv = document.getElementById(talkingCharacter);
+    function playScript() {
+      const lang = langSelect.value;
+      const selectedScripts = scripts[lang];
 
-    // Hide mouth GIF and stop shake animation
-    mouthGif.style.display = 'none';
-    charDiv.style.animationName = 'none';
+      // Reset video
+      video.currentTime = 0;
+      video.play();
 
-    if (utterance) {
-      synth.cancel();
+      // Start 1st voice (customer)
+      const voice1 = new SpeechSynthesisUtterance(selectedScripts[0]);
+      voice1.lang = lang === "hi" ? "hi-IN" : "en-IN";
+      voice1.rate = 1;
+
+      // On voice 1 end, speak response
+      voice1.onend = () => {
+        const voice2 = new SpeechSynthesisUtterance(selectedScripts[1]);
+        voice2.lang = lang === "hi" ? "hi-IN" : "en-IN";
+        voice2.rate = 1;
+        voice2.onend = () => video.pause(); // Stop video when all done
+        speechSynthesis.speak(voice2);
+      };
+
+      speechSynthesis.speak(voice1);
     }
-    talkingCharacter = null;
-  }
-</script>
+
+    function stopAll() {
+      speechSynthesis.cancel();
+      video.pause();
+      video.currentTime = 0;
+    }
+  </script>
 
 </body>
 </html>
