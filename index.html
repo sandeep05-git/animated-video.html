@@ -24,65 +24,96 @@
       padding: 10px 15px;
       margin: 10px;
     }
+
+    .video-block {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 40px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
 
   <h2>Seller Support Animated Demo</h2>
 
-  <video id="video" src="https://raw.githubusercontent.com/sandeep05-git/animated-video.html/main/video3.mp4" preload="auto"></video><br>
+  <!-- Video Block 1 -->
+  <div class="video-block">
+    <video id="video1" src="https://raw.githubusercontent.com/sandeep05-git/animated-video.html/main/video3.mp4" preload="auto"></video><br>
 
-  <label for="langSelect">Choose Language: </label>
-  <select id="langSelect">
-    <option value="en">English</option>
-    <option value="hi">Hindi</option>
-  </select>
+    <label for="langSelect1">Choose Language: </label>
+    <select id="langSelect1">
+      <option value="en">English</option>
+      <option value="hi">Hindi</option>
+    </select><br>
 
-  <br>
+    <button onclick="playScript('video1', 'langSelect1', 'script1')">▶ Play</button>
+    <button onclick="stopAll('video1')">⏹ Stop</button>
+  </div>
 
-  <button onclick="playScript()">▶ Play</button>
-  <button onclick="stopAll()">⏹ Stop</button>
+  <!-- Video Block 2 -->
+  <div class="video-block">
+    <video id="video2" src="https://raw.githubusercontent.com/sandeep05-git/animated-video.html/main/video2.mp4" preload="auto"></video><br>
+
+    <label for="langSelect2">Choose Language: </label>
+    <select id="langSelect2">
+      <option value="en">English</option>
+      <option value="hi">Hindi</option>
+    </select><br>
+
+    <button onclick="playScript('video2', 'langSelect2', 'script2')">▶ Play</button>
+    <button onclick="stopAll('video2')">⏹ Stop</button>
+  </div>
 
   <script>
-    const video = document.getElementById("video");
-    const langSelect = document.getElementById("langSelect");
-
-    const scripts = {
+    const script1 = {
       en: [
         "Why is my listing showing currently unavailable, even after all the details are updated?",
         "I understand your listing is currently showing as unavailable because the product dimensions are not updated according to the platform's accepted limits as per policy. Additionally, the product has been identified as a hazardous material (Hazmat), which requires you to submit a Safety Data Sheet (SDS) for approval."
       ],
       hi: [
         "मेरी लिस्टिंग सभी विवरण अपडेट करने के बाद भी वर्तमान में अनुपलब्ध क्यों दिख रही है?",
-              ]
-    };"मैं समझता हूँ कि आपकी लिस्टिंग फिलहाल 'Currently Unavailable' दिख रही है क्योंकि प्रोडक्ट के आयाम (dimensions) प्लेटफॉर्म की नीति के अनुसार निर्धारित सीमा में अपडेट नहीं किए गए हैं। साथ ही, इस प्रोडक्ट को खतरनाक सामग्री (Hazmat) के रूप में पहचाना गया है, जिसके लिए आपको एक सेफ्टी डेटा शीट (SDS) जमा करनी होगी।"
+        "मैं समझता हूँ कि आपकी लिस्टिंग फिलहाल 'Currently Unavailable' दिख रही है क्योंकि प्रोडक्ट के आयाम प्लेटफॉर्म की नीति के अनुसार निर्धारित सीमा में अपडेट नहीं किए गए हैं। साथ ही, इस प्रोडक्ट को खतरनाक सामग्री (Hazmat) के रूप में पहचाना गया है, जिसके लिए आपको एक सेफ्टी डेटा शीट (SDS) जमा करनी होगी।"
+      ]
+    };
 
-    function playScript() {
-      const lang = langSelect.value;
-      const selectedScripts = scripts[lang];
+    const script2 = {
+      en: [
+        "How can I update the product title and description?",
+        "To update your product title and description, go to the Manage Inventory page, click 'Edit' next to the product, and update the required fields. Make sure the title follows platform guidelines and avoid promotional words."
+      ],
+      hi: [
+        "मैं प्रोडक्ट का शीर्षक और विवरण कैसे अपडेट कर सकता हूँ?",
+        "प्रोडक्ट का शीर्षक और विवरण अपडेट करने के लिए 'Manage Inventory' पेज पर जाएं, प्रोडक्ट के पास 'Edit' पर क्लिक करें और आवश्यक फ़ील्ड अपडेट करें। सुनिश्चित करें कि शीर्षक प्लेटफॉर्म की गाइडलाइंस के अनुसार हो और प्रमोशनल शब्दों से बचें।"
+      ]
+    };
 
-      // Reset video
+    function playScript(videoId, langSelectId, scriptKey) {
+      const video = document.getElementById(videoId);
+      const lang = document.getElementById(langSelectId).value;
+      const selectedScripts = window[scriptKey][lang];
+
       video.currentTime = 0;
       video.play();
 
-      // Start 1st voice (customer)
       const voice1 = new SpeechSynthesisUtterance(selectedScripts[0]);
       voice1.lang = lang === "hi" ? "hi-IN" : "en-IN";
       voice1.rate = 1;
 
-      // On voice 1 end, speak response
       voice1.onend = () => {
         const voice2 = new SpeechSynthesisUtterance(selectedScripts[1]);
         voice2.lang = lang === "hi" ? "hi-IN" : "en-IN";
         voice2.rate = 1;
-        voice2.onend = () => video.pause(); // Stop video when all done
+        voice2.onend = () => video.pause();
         speechSynthesis.speak(voice2);
       };
 
       speechSynthesis.speak(voice1);
     }
 
-    function stopAll() {
+    function stopAll(videoId) {
+      const video = document.getElementById(videoId);
       speechSynthesis.cancel();
       video.pause();
       video.currentTime = 0;
