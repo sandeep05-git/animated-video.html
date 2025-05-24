@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Talking Characters Demo</title>
+<title>Talking Characters Demo - Indian English + Lips Animation</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -37,13 +37,14 @@
     height: 50px;
     background-size: contain;
     background-repeat: no-repeat;
-    background-image: url('https://i.imgur.com/0T4Xq4U.png');
+    background-image: url('https://i.imgur.com/0T4Xq4U.png'); /* mouth closed */
+    transition: background-image 0.15s ease-in-out;
   }
 </style>
 </head>
 <body>
 
-<h2>Talking Characters Demo</h2>
+<h2>Talking Characters Demo (Indian English Voice + Lips Animation)</h2>
 
 <textarea id="scriptBox" rows="8" cols="60" placeholder="Type your script here...">
 Hello,  
@@ -71,11 +72,11 @@ Thanks for your help!
 <script>
   const mouthFrames = {
     male: [
-      'https://i.imgur.com/0T4Xq4U.png',
-      'https://i.imgur.com/IyW9k2D.png'
+      'https://i.imgur.com/0T4Xq4U.png',  // mouth closed
+      'https://i.imgur.com/IyW9k2D.png'   // mouth open
     ],
     female: [
-      'https://i.imgur.com/0T4Xq4U.png',
+      'https://i.imgur.com/0T4Xq4U.png', 
       'https://i.imgur.com/IyW9k2D.png'
     ]
   };
@@ -112,6 +113,13 @@ For unblocking the listing, kindly update the product dimensions as per the poli
     mouth.style.backgroundImage = `url('${mouthFrames[character][0]}')`;
   }
 
+  // Try to find an Indian English voice from the system voices
+  function getIndianEnglishVoice() {
+    const voices = speechSynthesis.getVoices();
+    // Look for voices with 'en-IN' lang or containing 'Indian' in name
+    return voices.find(voice => voice.lang === 'en-IN' || voice.name.toLowerCase().includes('indian')) || null;
+  }
+
   function startTalking(character, role) {
     let scriptText = scripts[role];
     if (!scriptText) {
@@ -125,13 +133,31 @@ For unblocking the listing, kindly update the product dimensions as per the poli
     animateMouth(character);
 
     const utterance = new SpeechSynthesisUtterance(scriptText);
-    utterance.lang = 'en-US';
+
+    // Wait for voices to be loaded, then set Indian voice if available
+    function speakWithVoice() {
+      const indianVoice = getIndianEnglishVoice();
+      if (indianVoice) {
+        utterance.voice = indianVoice;
+        utterance.lang = indianVoice.lang;
+      } else {
+        utterance.lang = 'en-US'; // fallback
+      }
+      speechSynthesis.speak(utterance);
+    }
+
+    if (speechSynthesis.getVoices().length === 0) {
+      // Voices not loaded yet, wait for them
+      speechSynthesis.onvoiceschanged = () => {
+        speakWithVoice();
+      };
+    } else {
+      speakWithVoice();
+    }
 
     utterance.onend = () => {
       stopMouthAnimation(character);
     };
-
-    speechSynthesis.speak(utterance);
   }
 </script>
 
