@@ -10,13 +10,15 @@
   }
   .character {
     position: relative;
-    width: 200px;  /* width of one character */
-    height: 300px; /* height of image */
-    background-image: url('combined.png'); /* your combined image */
-    background-size: 400px 300px; /* full size of combined image */
+    width: 200px;  /* half of combined image width */
+    height: 300px; /* combined image height */
+    background-image: url('https://raw.githubusercontent.com/sandeep05-git/animated-video.html/main/ChatGPT%20Image%20May%2024%2C%202025%2C%2012_50_11%20PM.png');
+    background-size: 400px 300px; /* full combined image size */
     background-repeat: no-repeat;
     display: inline-block;
     margin-right: 40px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
   }
 
   #male {
@@ -30,13 +32,13 @@
   /* Mouth overlay */
   .mouth {
     position: absolute;
-    bottom: 50px;  /* adjust to position mouth correctly */
-    left: 50px;    /* adjust to center mouth horizontally */
+    bottom: 50px;  /* adjust mouth vertical position */
+    left: 50px;    /* adjust mouth horizontal position */
     width: 100px;
     height: 50px;
     background-size: contain;
     background-repeat: no-repeat;
-    background-image: url('mouth-closed.png'); /* default mouth */
+    background-image: url('https://i.imgur.com/0T4Xq4U.png'); /* mouth closed */
   }
 </style>
 </head>
@@ -59,10 +61,16 @@
 </div>
 
 <script>
-  // Mouth images for animation (You need to have these images locally)
+  // Mouth images URLs (open and closed)
   const mouthFrames = {
-    male: ['mouth-closed.png', 'mouth-open.png'],
-    female: ['mouth-closed.png', 'mouth-open.png']
+    male: [
+      'https://i.imgur.com/0T4Xq4U.png', // mouth closed
+      'https://i.imgur.com/IyW9k2D.png'  // mouth open
+    ],
+    female: [
+      'https://i.imgur.com/0T4Xq4U.png', // mouth closed
+      'https://i.imgur.com/IyW9k2D.png'  // mouth open
+    ]
   };
 
   let talkingInterval;
@@ -92,7 +100,7 @@
     animateMouth(character);
 
     const utterance = new SpeechSynthesisUtterance(script);
-    utterance.lang = 'en-US'; // Change language if needed
+    utterance.lang = 'en-US'; // You can change this if needed
 
     utterance.onend = () => {
       stopMouthAnimation(character);
