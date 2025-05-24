@@ -1,226 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Seller Support Service</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      line-height: 1.6;
-    }
-    header {
-      background: #0d6efd;
-      color: white;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin: 0 1rem;
-    }
-    .hero {
-      background: #e9f0ff;
-      padding: 3rem 2rem;
-      text-align: center;
-    }
-    .hero h1 {
-      margin-bottom: 1rem;
-    }
-    .section {
-      padding: 2rem;
-    }
-    .services {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-    .service-card {
-      border: 1px solid #ccc;
-      padding: 1rem;
-      border-radius: 8px;
-      background: white;
-    }
-    .faq {
-      margin: 1rem 0;
-    }
-    .faq summary {
-      font-weight: bold;
-      cursor: pointer;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      max-width: 400px;
-    }
-    form input, form textarea, form button {
-      padding: 0.75rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: #f1f1f1;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>Talking Characters Demo</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  .character {
+    position: relative;
+    width: 200px;  /* width of one character */
+    height: 300px; /* height of image */
+    background-image: url('combined.png'); /* your combined image */
+    background-size: 400px 300px; /* full size of combined image */
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-right: 40px;
+  }
+
+  #male {
+    background-position: 0 0; /* show left half */
+  }
+
+  #female {
+    background-position: -200px 0; /* show right half */
+  }
+
+  /* Mouth overlay */
+  .mouth {
+    position: absolute;
+    bottom: 50px;  /* adjust to position mouth correctly */
+    left: 50px;    /* adjust to center mouth horizontally */
+    width: 100px;
+    height: 50px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url('mouth-closed.png'); /* default mouth */
+  }
+</style>
 </head>
 <body>
- <header>
-  <div class="logo">Seller Support</div>
-  <nav class="menu" id="menu">
-    <ul>
-      <li><a href="blogpages/index.html">Blog</a></li>
-      <li><a href="index.html?go=about#about">About Us</a></li>
-      <li><a href="index.html?go=how-it-works#how-it-works">How It Works</a></li>
-      <li><a href="index.html?go=services#services">Services</a></li>
-      <li><a href="index.html?go=contact#contact">Contact Us</a></li>
-      <li><a href="faqs%20%26%20reviews.html" style="color: #3498db; font-weight: bold;">FAQs & Reviews</a></li>
-      <li><a href="news.html">📢 Quick Com & E-commerce News</a></li>
-    </ul>
-  </nav>
-</header>
-<section class="hero" id="home">
-    <h1>Start Selling Online with Ease</h1>
-    <p>We help you register, list, and grow on all major eCommerce platforms.</p>
-    <a href="#contact"><button>Contact Us</button></a>
-  </section>
 
-  <section class="section" id="about">
-    <h2>About Us</h2>
-    <p>We specialize in supporting new and existing sellers on Amazon, Flipkart, Meesho, and more. Our team ensures your online selling journey is smooth and successful.</p>
-  </section>
+<h2>Talking Characters Demo</h2>
 
-  <section class="section" id="services">
-    <h2>Our Services</h2>
-    <div class="services">
-      <div class="service-card">Seller Account Creation</div>
-      <div class="service-card">Product Listing & Cataloging</div>
-      <div class="service-card">Advertising & SEO</div>
-      <div class="service-card">Account Management</div>
-      <div class="service-card">Training & Support</div>
-    </div>
-  </section>
- 
-  <section class="section" id="faq">
-    <h2>FAQs</h2>
-    <div class="faq">
-      <details>
-        <summary>How do I start selling?</summary>
-        <p>We’ll help you create and verify your seller account on the platform of your choice.</p>
-      </details>
-      <details>
-        <summary>What documents are required?</summary>
-        <p>PAN, GST, Bank Account, and Address Proof. We'll assist in uploading and verification.</p>
-      </details>
-      <details>
-        <summary>Can I list without GST?</summary>
-        <p>Some platforms allow listing without GST. Contact us for platform-specific info.</p>
-      </details>
-    </div>
-  </section>
-<section id="contact">
-  <h2>Contact Us</h2>
-  <form id="contact-form" action="https://formspree.io/f/xqaqpyjv" method="POST">
-    <label>
-      Your Name:
-      <input type="text" name="name" required placeholder="Enter your name" />
-    </label>
-    <label>
-      Mobile Number:
-      <input type="tel" name="mobile" required placeholder="Enter your mobile number" />
-    </label>
-    <label>
-      Your Email:
-      <input type="email" name="email" required placeholder="Enter your email" />
-    </label>
-    <label>
-      Your Message:
-      <textarea name="message" required placeholder="Enter your message"></textarea>
-    </label>
-    <button type="submit">Send</button>
-  </form>
-  <div id="thank-you-message" style="display:none;">Thanks for contacting us!</div>
-</section>
+<textarea id="scriptBox" rows="3" cols="60" placeholder="Type your script here...">Hello, this is the seller support tutorial!</textarea><br><br>
 
-<footer>
-  <p>&copy; 2025 Ecoquicksupp. All rights reserved.</p>
-</footer>
+<button onclick="startTalking('male')">Male Talk</button>
+<button onclick="startTalking('female')">Female Talk</button>
+
+<div>
+  <div id="male" class="character">
+    <div class="mouth" id="male-mouth"></div>
+  </div>
+  <div id="female" class="character">
+    <div class="mouth" id="female-mouth"></div>
+  </div>
+</div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const elements = document.querySelectorAll('header, section, footer');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.1 });
-    elements.forEach(el => observer.observe(el));
-  });
+  // Mouth images for animation (You need to have these images locally)
+  const mouthFrames = {
+    male: ['mouth-closed.png', 'mouth-open.png'],
+    female: ['mouth-closed.png', 'mouth-open.png']
+  };
 
-  const menuIcon = document.getElementById('menu-icon');
-  const menu = document.getElementById('menu');
+  let talkingInterval;
 
-  menuIcon.addEventListener('click', () => {
-    menuIcon.classList.toggle('active');
-    menu.classList.toggle('active');
-  });
+  function animateMouth(character) {
+    const mouth = document.getElementById(character + '-mouth');
+    let index = 0;
+    talkingInterval = setInterval(() => {
+      mouth.style.backgroundImage = `url('${mouthFrames[character][index]}')`;
+      index = (index + 1) % mouthFrames[character].length;
+    }, 200);
+  }
 
-  menuIcon.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      menuIcon.click();
+  function stopMouthAnimation(character) {
+    clearInterval(talkingInterval);
+    const mouth = document.getElementById(character + '-mouth');
+    mouth.style.backgroundImage = `url('${mouthFrames[character][0]}')`;
+  }
+
+  function startTalking(character) {
+    const script = document.getElementById('scriptBox').value.trim();
+    if (!script) {
+      alert('Please enter a script!');
+      return;
     }
-  });
 
-  // Formspree thank you message
-  const form = document.getElementById('contact-form');
-  const thankYouMessage = document.getElementById('thank-you-message');
+    animateMouth(character);
 
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const formData = new FormData(form);
-    fetch(form.action, {
-      method: 'POST',
-      body: formData,
-      headers: { 'Accept': 'application/json' }
-    }).then(response => {
-      if (response.ok) {
-        form.style.display = 'none';
-        thankYouMessage.style.display = 'block';
-      } else {
-        alert('Oops! There was a problem submitting your form.');
-      }
-    }).catch(() => {
-      alert('Oops! There was a problem submitting your form.');
-    });
-  });
+    const utterance = new SpeechSynthesisUtterance(script);
+    utterance.lang = 'en-US'; // Change language if needed
+
+    utterance.onend = () => {
+      stopMouthAnimation(character);
+    };
+
+    speechSynthesis.speak(utterance);
+  }
 </script>
-  
-  <!-- Tawk.to Script -->
-  <script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-      s1.async=true;
-      s1.src='https://embed.tawk.to/6817654e138f991917bc62b1/1iqdm7f77';
-      s1.charset='UTF-8';
-      s1.setAttribute('crossorigin','*');
-      s0.parentNode.insertBefore(s1,s0);
-    })();
-  </script>
-  
+
 </body>
 </html>
