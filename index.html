@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Talking Character Video Demo</title>
   <style>
     body {
@@ -38,11 +38,13 @@
     let recordedChunks = [];
 
     const img = new Image();
+    img.crossOrigin = "anonymous"; // Needed for GitHub-hosted images
     img.src = 'https://raw.githubusercontent.com/sandeep05-git/animated-video.html/main/ChatGPT%20Image%20May%2024%2C%202025%2C%2012_50_11%20PM.png';
 
     function drawCharacter() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, 400, 300);
+
       // Draw mouth as animated oval
       ctx.fillStyle = "red";
       if (mouthOpen) {
@@ -68,6 +70,7 @@
     }
 
     async function startRecording() {
+      drawCharacter();
       const stream = canvas.captureStream(30);
       mediaRecorder = new MediaRecorder(stream);
       recordedChunks = [];
@@ -89,6 +92,7 @@
 
       const script = document.getElementById('scriptBox').value;
       startMouthAnimation();
+
       const utterance = new SpeechSynthesisUtterance(script);
       utterance.lang = 'en-IN'; // Indian English
 
