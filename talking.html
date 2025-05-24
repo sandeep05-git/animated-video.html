@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Talking Character with Hindi/English</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+      padding: 20px;
+    }
+
+    select, textarea, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+    }
+
+    canvas {
+      border: 2px solid #333;
+      margin-top: 20px;
+    }
+
+    .shake {
+      animation: shake 0.2s infinite;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(1px, 1px); }
+      25% { transform: translate(-1px, 2px); }
+      50% { transform: translate(2px, -1px); }
+      75% { transform: translate(-2px, 1px); }
+      100% { transform: translate(1px, -2px); }
+    }
+  </style>
+</head>
+<body>
+  <h2>Talking Character (Hindi/English)</h2>
+
+  <select id="language">
+    <option value="en-IN">English</option>
+    <option value="hi-IN">Hindi</option>
+  </select>
+
+  <br>
+
+  <textarea id="scriptBox" rows="4" cols="60">Hello, this is a seller support demo in English.</textarea><br>
+  <button onclick="startTalking()">Start Talking</button>
+
+  <br>
+  <canvas id="characterCanvas" width="400" height="300"></canvas>
+
+  <script>
+    const canvas = document.getElementById('characterCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = 'https://raw.githubusercontent.com/sandeep05-git/animated-video.html/main/ChatGPT%20Image%20May%2024%2C%202025%2C%2012_50_11%20PM.png';
+
+    let mouthOpen = false;
+    let interval;
+    let isShaking = false;
+
+    function drawCharacter() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw shaking effect
+      if (isShaking) {
+        const x = Math.random() * 4 - 2;
+        const y = Math.random() * 4 - 2;
+        ctx.drawImage(img, x, y, 400, 300);
+      } else {
+        ctx.drawImage(img, 0, 0, 400, 300);
+      }
+
+      // Draw mouth over both characters (adjust position if needed)
+      ctx.fillStyle = "red";
+      if (mouthOpen) {
+        ctx.beginPath();
+        ctx.ellipse(200, 260, 30, 15, 0, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = "black";
+        ctx.fillRect(170, 255, 60, 5);
+      }
+    }
+
+    function startMouthAnimation() {
+      isShaking = true;
+      interval = setInterval(() => {
+        mouthOpen = !mouthOpen;
+        drawCharacter();
+      }, 200);
+    }
+
+    function stopMouthAnimation() {
+      clearInterval(interval);
+      mouthOpen = false;
+      isShaking = false;
+      drawCharacter();
+    }
+
+    function startTalking() {
+      const script = document.getElementById('scriptBox').value.trim();
+      const lang = document.getElementById('language').value;
+
+      if (!script) {
+        alert('Please enter a script!');
+        return;
+      }
+
+      startMouthAnimation();
+
+      const utterance = new SpeechSynthesisUtterance(script);
+      utterance.lang = lang;
+
+      utterance.onend = () => {
+        stopMouthAnimation();
+      };
+
+      speechSynthesis.speak(utterance);
+    }
+
+    img.onload = drawCharacter;
+  </script>
+</body>
+</html>
