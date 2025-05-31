@@ -48,15 +48,17 @@
     const langSelect = document.getElementById("langSelect");
 
     const scripts = {
-      en: [
-        "Why is my listing showing currently unavailable, even after all the details are updated?",
-        "I understand your listing is currently showing as unavailable because the product dimensions are not updated according to the platform's accepted limits as per policy. Additionally, the product has been identified as a hazardous material (Hazmat), which requires you to submit a Safety Data Sheet (SDS) for approval."
-      ],
+      en: 
+         success story: [
+        "Small house, woman stitching bags,This is Rina, a homemaker from a small town in India. She used to make handmade jute bags and sell them through WhatsApp. But every day, she dreamt bigger.",
+        "Rina looking at phone, confused,She wanted to sell on Flipkart and Amazon.but didn’t know how to register, list products, or even talk to seller support.",
+        "Phone screen: Browsing EcoQuickSupp website, That’s when Rina found EcoQuickSupp.com — a free seller support site that explained everything clearly in her language. From account setup to product listings.",
+        "Rina watching tutorial, updating her product photos, She learned how to take better photos, write product titles with the right keywords, and fix catalog errors. No more waiting for seller support calls.",
+        "Rina packing orders, smiling as orders increase, In just a few months, Rina went from 0 orders to 15 a day. She started earning steady income and even hired two more women to help pack orders.",
+        "Rina with her brand banner, Amazon & Flipkart logos in background,"Today, Rina runs her brand on both Amazon and Flipkart — making over ₹6 lakhs a month. All because she chose to learn and grow with EcoQuickSupp.",
+        "Call-to-action screen – EcoQuickSupp logo with link, "Want to start your seller journey like Rina? Visit EcoQuickSupp.com – your step-by-step guide for seller support, blogs, and success."
+        ], 
       hi: [
-        "मेरी लिस्टिंग सभी विवरण अपडेट करने के बाद भी वर्तमान में अनुपलब्ध क्यों दिख रही है?",
-              ]
-    };"मैं समझता हूँ कि आपकी लिस्टिंग फिलहाल 'Currently Unavailable' दिख रही है क्योंकि प्रोडक्ट के आयाम (dimensions) प्लेटफॉर्म की नीति के अनुसार निर्धारित सीमा में अपडेट नहीं किए गए हैं। साथ ही, इस प्रोडक्ट को खतरनाक सामग्री (Hazmat) के रूप में पहचाना गया है, जिसके लिए आपको एक सेफ्टी डेटा शीट (SDS) जमा करनी होगी।"
-
     function playScript() {
       const lang = langSelect.value;
       const selectedScripts = scripts[lang];
