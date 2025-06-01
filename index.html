@@ -47,65 +47,70 @@
     const video = document.getElementById("video");
     const langSelect = document.getElementById("langSelect");
 
-    const scripts = {
-      en: 
-        fake buyer: [
-         Scene: A Seller receives an order notification. Looks excited.
-         Seller (excited):
-         “Yes! Another order just came in. Let’s pack it quickly!”
-         [Scene: Seller packs the product and ships it out.]
-         [Scene changes: 3 days later – Return initiated]
-         Seller (confused):
-        “Return? But the buyer didn’t even receive it properly... again?”
-         [Scene: Notification – “Fake Buyer suspected. COD not accepted.”]
-        Seller (frustrated):
-        “This is the third time this week! Why do fake buyers keep doing this?”
-        “Fake buyers place Cash-on-Delivery orders just to prank sellers or disrupt their business. They never pick up the parcel, wasting time, money, and effort.”
-        [Scene: Seller talking to support]
-         Seller:
-        “I’ve reported this buyer ID before. Can you block them?”
-         Support (calm tone):
-        “We’ll escalate it to the Trust & Safety team. Meanwhile, consider disabling COD or blocking high-risk PIN codes.”
-        [Scene ends with tip screen]
-       📌 Tips for Sellers:
-       Disable COD for high-risk areas
-       Report fake orders with full details
-       Track repeat offenders by phone or address
-       Use platforms that verify buyers before checkout
-    ],
-hi: 
-    स्क्रिप्ट फेक बायर: [
-    [दृश्य: एक सेलर को नया ऑर्डर नोटिफिकेशन मिलता है। वह खुश दिखता है]
-    सेलर (उत्साहित होकर):
-    "वाह! एक और ऑर्डर आया है। जल्दी से पैक कर देता हूँ!"
-     [दृश्य: सेलर प्रोडक्ट पैक करता है और शिप कर देता है]
-     [दृश्य बदलता है: 3 दिन बाद – रिटर्न नोटिफिकेशन]
-     सेलर (हैरान होकर):
-    "रिटर्न? पर बायर ने ठीक से रिसीव भी नहीं किया... फिर से?"
-     [दृश्य: नोटिफिकेशन – "शक के आधार पर फेक बायर। COD रिसीव नहीं किया।"]
-     सेलर (गुस्से में):
-    "ये इस हफ्ते तीसरी बार हो रहा है! ये फेक बायर बार-बार क्यों ऑर्डर करते हैं?"
-    [वॉइसओवर / नैरेटर आवाज़]:
-    "फेक बायर्स जानबूझकर COD पर ऑर्डर करके प्रैंक या नुकसान पहुंचाने की कोशिश करते हैं। वो पार्सल रिसीव नहीं करते, जिससे सेलर का टाइम और पैसा दोनों बर्बाद होता है।"
-    [दृश्य: सेलर सपोर्ट से बात कर रहा है]
-     सेलर:
-    "मैंने इस बायर को पहले भी रिपोर्ट किया था। कृपया इसे ब्लॉक करें।"
-    सपोर्ट (शांत लहजे में):
-    "हम इसे Trust & Safety टीम तक escalate करेंगे। तब तक आप COD को disable कर सकते हैं या risky pincodes को ब्लॉक कर सकते हैं।"
-    [अंतिम स्क्रीन: सुझाव दिखाई देता है]
-    📌 सेलर्स के लिए सुझाव:
-     High-risk एरिया में COD बंद करें
-     फेक ऑर्डर्स की रिपोर्ट तुरंत करें
-     Repeat offenders का डेटा नोट करें (फोन/एड्रेस)
-     ऐसी वेबसाइट यूज़ करें जो बायर्स को वेरीफाई करती हो
-     अगर आप चाहें, मैं इसका animated HTML version या voiceover-ready audio script भी बना सकता हूँ। बताइए किस format में चाहिए?
- ],
-    
-    function playScript() {
-      const lang = langSelect.value;
-      const selectedScripts = scripts[lang];
+   const scripts = {
+  en: [
+    "Scene: A Seller receives an order notification. Looks excited.",
+    "Seller (excited): Yes! Another order just came in. Let’s pack it quickly!",
+    "Scene: Seller packs the product and ships it out.",
+    "Scene changes: 3 days later – Return initiated.",
+    "Seller (confused): Return? But the buyer didn’t even receive it properly... again?",
+    "Notification: Fake Buyer suspected. COD not accepted.",
+    "Seller (frustrated): This is the third time this week! Why do fake buyers keep doing this?",
+    "Fake buyers place Cash-on-Delivery orders just to prank sellers or disrupt their business. They never pick up the parcel, wasting time, money, and effort.",
+    "Seller: I’ve reported this buyer ID before. Can you block them?",
+    "Support (calm tone): We’ll escalate it to the Trust & Safety team. Meanwhile, consider disabling COD or blocking high-risk PIN codes.",
+    "Tips for Sellers: Disable COD for high-risk areas, report fake orders with full details, track repeat offenders by phone or address, use platforms that verify buyers before checkout."
+  ],
+  hi: [
+    "दृश्य: एक सेलर को नया ऑर्डर नोटिफिकेशन मिलता है। वह खुश दिखता है।",
+    "सेलर (उत्साहित होकर): वाह! एक और ऑर्डर आया है। जल्दी से पैक कर देता हूँ!",
+    "दृश्य: सेलर प्रोडक्ट पैक करता है और शिप कर देता है।",
+    "3 दिन बाद – रिटर्न नोटिफिकेशन।",
+    "सेलर (हैरान होकर): रिटर्न? पर बायर ने ठीक से रिसीव भी नहीं किया... फिर से?",
+    "नोटिफिकेशन: शक के आधार पर फेक बायर। COD रिसीव नहीं किया।",
+    "सेलर (गुस्से में): ये इस हफ्ते तीसरी बार हो रहा है! ये फेक बायर बार-बार क्यों ऑर्डर करते हैं?",
+    "फेक बायर्स जानबूझकर COD पर ऑर्डर करके प्रैंक या नुकसान पहुंचाने की कोशिश करते हैं। वो पार्सल रिसीव नहीं करते, जिससे सेलर का टाइम और पैसा दोनों बर्बाद होता है।",
+    "सेलर: मैंने इस बायर को पहले भी रिपोर्ट किया था। कृपया इसे ब्लॉक करें।",
+    "सपोर्ट (शांत लहजे में): हम इसे Trust & Safety टीम तक escalate करेंगे। तब तक आप COD को disable कर सकते हैं या risky pincodes को ब्लॉक कर सकते हैं।",
+    "सेलर्स के लिए सुझाव: High-risk एरिया में COD बंद करें, फेक ऑर्डर्स की रिपोर्ट तुरंत करें, Repeat offenders का डेटा नोट करें, ऐसी वेबसाइट यूज़ करें जो बायर्स को वेरीफाई करती हो।"
+  ]
+};
 
-      // Reset video
+function playScript() {
+  const lang = langSelect.value;
+  const selectedScripts = scripts[lang];
+
+  video.currentTime = 0;
+  video.play();
+
+  let index = 0;
+
+  function speakNext() {
+    if (index < selectedScripts.length) {
+      const utterance = new SpeechSynthesisUtterance(selectedScripts[index]);
+      utterance.lang = lang === "hi" ? "hi-IN" : "en-IN";
+      utterance.rate = 1;
+      utterance.onend = () => {
+        index++;
+        speakNext();
+      };
+      speechSynthesis.speak(utterance);
+    } else {
+      video.pause();
+      video.currentTime = 0;
+    }
+  }
+
+  speakNext();
+}
+
+function stopAll() {
+  speechSynthesis.cancel();
+  video.pause();
+  video.currentTime = 0;
+}
+
+ // Reset video
       video.currentTime = 0;
       video.play();
 
