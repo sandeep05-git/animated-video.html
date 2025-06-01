@@ -47,88 +47,69 @@
     const video = document.getElementById("video");
     const langSelect = document.getElementById("langSelect");
 
-   const scripts = {
-  en: [
-    "Scene: A Seller receives an order notification. Looks excited.",
-    "Seller (excited): Yes! Another order just came in. Let’s pack it quickly!",
-    "Scene: Seller packs the product and ships it out.",
-    "Scene changes: 3 days later – Return initiated.",
-    "Seller (confused): Return? But the buyer didn’t even receive it properly... again?",
-    "Notification: Fake Buyer suspected. COD not accepted.",
-    "Seller (frustrated): This is the third time this week! Why do fake buyers keep doing this?",
-    "Fake buyers place Cash-on-Delivery orders just to prank sellers or disrupt their business. They never pick up the parcel, wasting time, money, and effort.",
-    "Seller: I’ve reported this buyer ID before. Can you block them?",
-    "Support (calm tone): We’ll escalate it to the Trust & Safety team. Meanwhile, consider disabling COD or blocking high-risk PIN codes.",
-    "Tips for Sellers: Disable COD for high-risk areas, report fake orders with full details, track repeat offenders by phone or address, use platforms that verify buyers before checkout."
-  ],
-  hi: [
-    "दृश्य: एक सेलर को नया ऑर्डर नोटिफिकेशन मिलता है। वह खुश दिखता है।",
-    "सेलर (उत्साहित होकर): वाह! एक और ऑर्डर आया है। जल्दी से पैक कर देता हूँ!",
-    "दृश्य: सेलर प्रोडक्ट पैक करता है और शिप कर देता है।",
-    "3 दिन बाद – रिटर्न नोटिफिकेशन।",
-    "सेलर (हैरान होकर): रिटर्न? पर बायर ने ठीक से रिसीव भी नहीं किया... फिर से?",
-    "नोटिफिकेशन: शक के आधार पर फेक बायर। COD रिसीव नहीं किया।",
-    "सेलर (गुस्से में): ये इस हफ्ते तीसरी बार हो रहा है! ये फेक बायर बार-बार क्यों ऑर्डर करते हैं?",
-    "फेक बायर्स जानबूझकर COD पर ऑर्डर करके प्रैंक या नुकसान पहुंचाने की कोशिश करते हैं। वो पार्सल रिसीव नहीं करते, जिससे सेलर का टाइम और पैसा दोनों बर्बाद होता है।",
-    "सेलर: मैंने इस बायर को पहले भी रिपोर्ट किया था। कृपया इसे ब्लॉक करें।",
-    "सपोर्ट (शांत लहजे में): हम इसे Trust & Safety टीम तक escalate करेंगे। तब तक आप COD को disable कर सकते हैं या risky pincodes को ब्लॉक कर सकते हैं।",
-    "सेलर्स के लिए सुझाव: High-risk एरिया में COD बंद करें, फेक ऑर्डर्स की रिपोर्ट तुरंत करें, Repeat offenders का डेटा नोट करें, ऐसी वेबसाइट यूज़ करें जो बायर्स को वेरीफाई करती हो।"
-  ]
-};
+    // Scripts as arrays of strings for each line to be spoken
+    const scripts = {
+      en: [
+        "Scene: A Seller receives an order notification. Looks excited.",
+        "Seller excited: Yes! Another order just came in. Let’s pack it quickly!",
+        "Scene: Seller packs the product and ships it out.",
+        "Three days later, return initiated.",
+        "Seller confused: Return? But the buyer didn’t even receive it properly... again?",
+        "Notification: Fake Buyer suspected. COD not accepted.",
+        "Seller frustrated: This is the third time this week! Why do fake buyers keep doing this?",
+        "Fake buyers place Cash-on-Delivery orders just to prank sellers or disrupt their business. They never pick up the parcel, wasting time, money, and effort.",
+        "Seller: I’ve reported this buyer ID before. Can you block them?",
+        "Support calm tone: We’ll escalate it to the Trust & Safety team. Meanwhile, consider disabling COD or blocking high-risk PIN codes.",
+        "Tips for Sellers: Disable COD for high-risk areas, report fake orders with full details, track repeat offenders by phone or address, use platforms that verify buyers before checkout."
+      ],
+      hi: [
+        "दृश्य: एक सेलर को नया ऑर्डर नोटिफिकेशन मिलता है। वह खुश दिखता है।",
+        "सेलर उत्साहित होकर: वाह! एक और ऑर्डर आया है। जल्दी से पैक कर देता हूँ!",
+        "दृश्य: सेलर प्रोडक्ट पैक करता है और शिप कर देता है।",
+        "तीन दिन बाद, रिटर्न शुरू हो गया।",
+        "सेलर हैरान होकर: रिटर्न? पर बायर ने ठीक से रिसीव भी नहीं किया... फिर से?",
+        "नोटिफिकेशन: शक के आधार पर फेक बायर। COD रिसीव नहीं किया।",
+        "सेलर गुस्से में: ये इस हफ्ते तीसरी बार हो रहा है! ये फेक बायर बार-बार क्यों ऑर्डर करते हैं?",
+        "फेक बायर्स जानबूझकर COD पर ऑर्डर करके प्रैंक या नुकसान पहुंचाने की कोशिश करते हैं। वो पार्सल रिसीव नहीं करते, जिससे सेलर का टाइम और पैसा दोनों बर्बाद होता है।",
+        "सेलर: मैंने इस बायर को पहले भी रिपोर्ट किया था। कृपया इसे ब्लॉक करें।",
+        "सपोर्ट शांत लहजे में: हम इसे ट्रस्ट एंड सेफ्टी टीम तक escalate करेंगे। तब तक आप COD को disable कर सकते हैं या रिस्की पिनकोड्स को ब्लॉक कर सकते हैं।",
+        "सेलर्स के लिए सुझाव: हाई-रिस्क एरिया में COD बंद करें, फेक ऑर्डर्स की रिपोर्ट तुरंत करें, रिपीट ऑफेंडर्स का डेटा नोट करें, ऐसी वेबसाइट यूज़ करें जो बायर्स को वेरीफाई करती हो।"
+      ]
+    };
 
-function playScript() {
-  const lang = langSelect.value;
-  const selectedScripts = scripts[lang];
+    let currentLineIndex = 0;
 
-  video.currentTime = 0;
-  video.play();
+    function playScript() {
+      const lang = langSelect.value;
+      const selectedScript = scripts[lang];
 
-  let index = 0;
-
-  function speakNext() {
-    if (index < selectedScripts.length) {
-      const utterance = new SpeechSynthesisUtterance(selectedScripts[index]);
-      utterance.lang = lang === "hi" ? "hi-IN" : "en-IN";
-      utterance.rate = 1;
-      utterance.onend = () => {
-        index++;
-        speakNext();
-      };
-      speechSynthesis.speak(utterance);
-    } else {
-      video.pause();
-      video.currentTime = 0;
-    }
-  }
-
-  speakNext();
-}
-
-function stopAll() {
-  speechSynthesis.cancel();
-  video.pause();
-  video.currentTime = 0;
-}
-
- // Reset video
+      // Reset and play video
       video.currentTime = 0;
       video.play();
 
-      // Start 1st voice (customer)
-      const voice1 = new SpeechSynthesisUtterance(selectedScripts[0]);
-      voice1.lang = lang === "hi" ? "hi-IN" : "en-IN";
-      voice1.rate = 1;
+      // Cancel any ongoing speech
+      speechSynthesis.cancel();
+      currentLineIndex = 0;
 
-      // On voice 1 end, speak response
-      voice1.onend = () => {
-        const voice2 = new SpeechSynthesisUtterance(selectedScripts[1]);
-        voice2.lang = lang === "hi" ? "hi-IN" : "en-IN";
-        voice2.rate = 1;
-        voice2.onend = () => video.pause(); // Stop video when all done
-        speechSynthesis.speak(voice2);
-      };
+      // Function to speak next line recursively
+      function speakLine() {
+        if (currentLineIndex < selectedScript.length) {
+          const utterance = new SpeechSynthesisUtterance(selectedScript[currentLineIndex]);
+          utterance.lang = lang === "hi" ? "hi-IN" : "en-US";
+          utterance.rate = 1;
+          utterance.onend = () => {
+            currentLineIndex++;
+            speakLine();
+          };
+          speechSynthesis.speak(utterance);
+        } else {
+          // When done speaking all lines, pause the video
+          video.pause();
+          video.currentTime = 0;
+        }
+      }
 
-      speechSynthesis.speak(voice1);
+      speakLine();
     }
 
     function stopAll() {
